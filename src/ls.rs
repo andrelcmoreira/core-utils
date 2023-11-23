@@ -3,21 +3,8 @@ use std::fs::read_dir;
 use std::io::ErrorKind::{NotFound, PermissionDenied};
 
 fn ls(path: &str) {
-    match read_dir(path) {
-        Ok(list) => {
-            for entry in list {
-                let name = entry
-                    .unwrap()
-                    .file_name()
-                    .into_string()
-                    .unwrap();
-
-                if ! name.starts_with(".") {
-                    print!("{}  ", name)
-                }
-            }
-            println!("")
-        },
+    let files = match read_dir(path) {
+        Ok(f) => f,
         Err(e) => {
             match e.kind() {
                 PermissionDenied =>
@@ -29,6 +16,20 @@ fn ls(path: &str) {
             }
         }
     };
+    
+    for entry in files {
+        let name = entry
+            .unwrap()
+            .file_name()
+            .into_string()
+            .unwrap();
+
+        if ! name.starts_with(".") {
+            print!("{}  ", name)
+        }
+    }
+    
+    println!("")
 }
 
 fn main() {
