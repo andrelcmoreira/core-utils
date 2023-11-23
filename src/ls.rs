@@ -6,7 +6,15 @@ fn ls(path: &str) {
     match read_dir(path) {
         Ok(list) => {
             for entry in list {
-                print!("{}\t", entry.unwrap().file_name().to_str().unwrap())
+                let name = entry
+                    .unwrap()
+                    .file_name()
+                    .into_string()
+                    .unwrap();
+
+                if ! name.starts_with(".") {
+                    print!("{}  ", name)
+                }
             }
             println!("")
         },
