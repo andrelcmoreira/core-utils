@@ -11,6 +11,10 @@ path = "src/cat.rs"
 name = "ls"
 path = "src/ls.rs"
 
+[[bin]]
+name = "rmdir"
+path = "src/rmdir.rs"
+
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
