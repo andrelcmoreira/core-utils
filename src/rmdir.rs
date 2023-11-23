@@ -5,7 +5,7 @@ fn rmdir(path: &str) {
     match remove_dir(path) {
         Ok(_) => {},
         Err(e) =>
-            panic!("rmdir: fail to remove '{}': {path}", e.to_string())
+            println!("rmdir: fail to remove '{}': {path}", e.to_string())
     };
 }
 
