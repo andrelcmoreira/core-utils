@@ -10,7 +10,7 @@ fn cat(filename: &str) {
             f.read_to_string(&mut buf).unwrap();
             print!("{buf}")
         },
-        Err(e) => panic!("cat: {filename}: {}", e.to_string())
+        Err(e) => println!("cat: {filename}: {}", e.to_string())
     };
 }
 
