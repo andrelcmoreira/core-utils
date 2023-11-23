@@ -7,6 +7,10 @@ edition = "2021"
 name = "cat"
 path = "src/cat.rs"
 
+[[bin]]
+name = "ls"
+path = "src/ls.rs"
+
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
