@@ -16,6 +16,10 @@ name = "rmdir"
 path = "src/rmdir.rs"
 
 [[bin]]
+name = "cp"
+path = "src/cp.rs"
+
+[[bin]]
 name = "pwd"
 path = "src/pwd.rs"
 
