@@ -1,6 +1,7 @@
 use std::env::args;
 use std::fs::read_dir;
 use std::io::ErrorKind::{NotFound, PermissionDenied};
+use std::process::exit;
 
 fn ls(path: &str) {
     let files = match read_dir(path) {
@@ -8,15 +9,16 @@ fn ls(path: &str) {
         Err(e) => {
             match e.kind() {
                 PermissionDenied =>
-                    panic!("ls: couldn't access '{}': {}", path, e.to_string()),
+                    println!("ls: couldn't access '{path}': {}", e.to_string()),
                 NotFound =>
-                    panic!("ls: couldn't open the directory '{}': {}", path,
-                           e.to_string()),
-                _ => panic!("ls: unknown error")
-            }
+                    println!("ls: couldn't open the directory '{path}': {}",
+                       e.to_string()),
+                _ => println!("ls: unknown error")
+            };
+            exit(1)
         }
     };
-    
+
     for entry in files {
         let name = entry
             .unwrap()
@@ -28,7 +30,7 @@ fn ls(path: &str) {
             print!("{}  ", name)
         }
     }
-    
+
     println!("")
 }
 
