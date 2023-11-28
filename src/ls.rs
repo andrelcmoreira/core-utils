@@ -19,7 +19,7 @@ fn show_files(files: ReadDir) {
     println!("")
 }
 
-fn ls_directory(path: &str) {
+fn ls_dir(path: &str) {
     match read_dir(path) {
         Ok(files) => show_files(files),
         Err(e) => match e.kind() {
@@ -27,7 +27,7 @@ fn ls_directory(path: &str) {
                 println!("ls: couldn't access '{path}': {}", e.to_string()),
             NotFound =>
                 println!("ls: couldn't open the directory '{path}': {}",
-                    e.to_string()),
+                         e.to_string()),
             _ => println!("ls: unknown error")
         }
     };
@@ -37,13 +37,15 @@ fn ls_file(path: &str) {
     println!("{}", path)
 }
 
-fn is_directory(path: &str) -> bool {
-    return Path::new(path).is_dir();
+fn is_dir(path: &str) -> bool {
+    let p = Path::new(path);
+
+    p.is_dir()
 }
 
 fn ls(path: &str) {
-    if is_directory(path) {
-        ls_directory(path)
+    if is_dir(path) {
+        ls_dir(path)
     } else {
         ls_file(path)
     }
@@ -52,7 +54,11 @@ fn ls(path: &str) {
 fn main() {
     let args: Vec<String> = args().collect();
 
-    for i in 1..args.len() {
-        ls(args[i].as_str())
+    if args.len() == 1 {
+        ls(".")
+    } else {
+        for i in 1..args.len() {
+            ls(args[i].as_str())
+        }
     }
 }
