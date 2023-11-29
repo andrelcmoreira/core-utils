@@ -43,22 +43,23 @@ fn is_dir(path: &str) -> bool {
     p.is_dir()
 }
 
-fn ls(path: &str) {
-    if is_dir(path) {
-        ls_dir(path)
-    } else {
-        ls_file(path)
+fn ls(paths: Vec<String>) {
+    if paths.len() == 1 {
+        ls_dir(".");
+        return
+    }
+
+    for path in &paths[1..] {
+        if is_dir(path) {
+            ls_dir(path)
+        } else {
+            ls_file(path)
+        }
     }
 }
 
 fn main() {
     let args: Vec<String> = args().collect();
 
-    if args.len() == 1 {
-        ls(".")
-    } else {
-        for i in 1..args.len() {
-            ls(args[i].as_str())
-        }
-    }
+    ls(args)
 }
