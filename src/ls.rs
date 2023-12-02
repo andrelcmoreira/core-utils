@@ -1,9 +1,25 @@
 use std::env::args;
-use std::fs::{read_dir, ReadDir};
+use std::fs::read_dir;
 use std::io::ErrorKind::{NotFound, PermissionDenied};
 use std::path::Path;
 
-fn show_files(files: ReadDir) {
+#[path = "./core/error.rs"]
+mod error;
+use error::set_panic_handler;
+
+fn ls_dir(path: &str) {
+    let files = match read_dir(path) {
+        Ok(f) => f,
+        Err(e) => match e.kind() {
+            PermissionDenied =>
+                panic!("ls: couldn't access '{path}': {}", e.to_string()),
+            NotFound =>
+                panic!("ls: couldn't open the directory '{path}': {}",
+                       e.to_string()),
+            _ => panic!("ls: unknown error")
+        }
+    };
+
     for entry in files {
         let name = entry
             .unwrap()
@@ -17,20 +33,6 @@ fn show_files(files: ReadDir) {
     }
 
     println!("")
-}
-
-fn ls_dir(path: &str) {
-    match read_dir(path) {
-        Ok(files) => show_files(files),
-        Err(e) => match e.kind() {
-            PermissionDenied =>
-                println!("ls: couldn't access '{path}': {}", e.to_string()),
-            NotFound =>
-                println!("ls: couldn't open the directory '{path}': {}",
-                         e.to_string()),
-            _ => println!("ls: unknown error")
-        }
-    };
 }
 
 fn ls_file(path: &str) {
@@ -59,7 +61,8 @@ fn ls(paths: Vec<String>) {
 }
 
 fn main() {
-    let args: Vec<String> = args().collect();
+    set_panic_handler();
 
+    let args: Vec<String> = args().collect();
     ls(args)
 }
