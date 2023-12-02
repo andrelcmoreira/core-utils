@@ -36,13 +36,26 @@ fn ls_dir(path: &str) {
 }
 
 fn ls_file(path: &str) {
-    println!("{}", path)
+    match is_file(path) {
+        true => println!("{}", path),
+        false => {
+            // TODO(andrelcmoreira): standardize the error messages
+            let error = "No such file or directory";
+            panic!("ls: couldn't open the directory '{path}': {error}")
+        }
+    };
 }
 
 fn is_dir(path: &str) -> bool {
     let p = Path::new(path);
 
     p.is_dir()
+}
+
+fn is_file(path: &str) -> bool {
+    let p = Path::new(path);
+
+    p.is_file()
 }
 
 fn ls(paths: Vec<String>) {
@@ -55,6 +68,7 @@ fn ls(paths: Vec<String>) {
         if is_dir(path) {
             ls_dir(path)
         } else {
+            // the entry can be a file or a not existent entry
             ls_file(path)
         }
     }
