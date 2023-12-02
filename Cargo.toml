@@ -23,6 +23,8 @@ path = "src/cp.rs"
 name = "pwd"
 path = "src/pwd.rs"
 
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+[[bin]]
+name = "rm"
+path = "src/rm.rs"
 
 [dependencies]
