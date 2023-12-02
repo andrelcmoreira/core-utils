@@ -17,5 +17,7 @@ fn cat(filename: &str) {
 fn main() {
     let args: Vec<String> = args().collect();
 
-    cat(args[1].as_str());
+    for arg in &args[1..] {
+        cat(arg.as_str());
+    }
 }
