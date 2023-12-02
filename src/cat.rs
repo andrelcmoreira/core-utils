@@ -1,15 +1,10 @@
 use std::env::args;
 use std::fs::File;
 use std::io::Read;
-use std::panic::set_hook;
 
-fn set_panic_handler() {
-    set_hook(Box::new(|info| {
-        if let Some(s) = info.payload().downcast_ref::<String>() {
-            println!("{}", s);
-        }
-    }));
-}
+#[path = "./core/error.rs"]
+mod error;
+use error::set_panic_handler;
 
 fn cat(filename: &str) {
     let mut buf = String::new();
