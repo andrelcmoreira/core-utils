@@ -2,9 +2,8 @@ use std::env::args;
 use std::fs::File;
 use std::io::Read;
 
-#[path = "./core/error.rs"]
-mod error;
-use error::set_panic_handler;
+mod core;
+use core::error::set_panic_handler;
 
 fn cat(filename: &str) {
     let mut buf = String::new();

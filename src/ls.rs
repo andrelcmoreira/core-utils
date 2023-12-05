@@ -3,9 +3,8 @@ use std::fs::read_dir;
 use std::io::ErrorKind::{NotFound, PermissionDenied};
 use std::path::Path;
 
-#[path = "./core/error.rs"]
-mod error;
-use error::set_panic_handler;
+mod core;
+use core::error::set_panic_handler;
 
 fn ls_dir(path: &str) {
     let files = match read_dir(path) {
