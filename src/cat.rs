@@ -5,6 +5,36 @@ use std::io::Read;
 mod core;
 use core::error::set_panic_handler;
 
+enum CatFlags {
+    NoOption,
+}
+
+struct CatCtx {
+    files: Vec<String>,
+    flags: Vec<CatFlags>
+}
+
+impl CatCtx {
+    fn new() -> CatCtx {
+        CatCtx {
+            files: Vec::new(),
+            flags: Vec::new()
+        }
+    }
+}
+
+fn build_ctx_from_args(args: Vec<String>) -> CatCtx {
+    let mut ctx = CatCtx::new();
+
+    for arg in &args[1..] {
+        match arg.as_str() {
+            _ => ctx.files.push(arg.clone())
+        }
+    }
+
+    return ctx
+}
+
 fn cat(filename: &str) {
     let mut buf = String::new();
 
@@ -22,8 +52,8 @@ fn cat(filename: &str) {
 fn main() {
     set_panic_handler();
 
-    let args: Vec<String> = args().collect();
-    for arg in &args[1..] {
-        cat(arg.as_str());
+    let ctx = build_ctx_from_args(args().collect());
+    for file in &ctx.files {
+        cat(file.as_str());
     }
 }

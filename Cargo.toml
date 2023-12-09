@@ -26,5 +26,3 @@ path = "src/pwd.rs"
 [[bin]]
 name = "rm"
 path = "src/rm.rs"
-
-[dependencies]
