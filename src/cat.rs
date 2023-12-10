@@ -47,7 +47,10 @@ fn build_ctx(args: Vec<String>) -> Result<ProgCtx, String> {
 
     for arg in &args[1..] {
         match arg.as_str() {
-            "--help" => ctx.flags.push(Options::Help),
+            "--help" => {
+                ctx.flags.push(Options::Help);
+                break
+            },
             _ => {
                 if arg.starts_with("-") {
                     let msg = format!("cat: invalid option -- \"{arg}\"\n\
