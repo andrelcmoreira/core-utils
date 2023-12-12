@@ -1,6 +1,6 @@
 use std::env::args;
 use std::fs::File;
-use std::io::{stdin, Read};
+use std::io::{stdin, Error, Read};
 
 mod core;
 use core::error::set_panic_handler;
@@ -74,7 +74,10 @@ fn cat(ctx: ProgCtx) {
 
     if ctx.has_files() {
         for file in ctx.files {
-            cat_from_file(file.as_str(), &ctx.flags);
+            match cat_from_file(&file) {
+                Ok(buf) => print!("{buf}"),
+                Err(e) => println!("cat: {file}: {}", e)
+            }
         }
     } else {
         cat_from_stdin()
@@ -92,18 +95,12 @@ fn cat_from_stdin() {
     }
 }
 
-fn cat_from_file(filename: &str, _flags: &Vec<Options>) {
+fn cat_from_file(filename: &String) -> Result<String, Error> {
     let mut buf = String::new();
+    let mut file = File::open(filename)?;
 
-    match File::open(filename) {
-        Ok(mut f) => {
-            match f.read_to_string(&mut buf) {
-                Ok(_) => print!("{buf}"),
-                Err(e) => panic!("cat: {filename}: {}", e.to_string())
-            };
-        },
-        Err(e) => panic!("cat: {filename}: {}", e.to_string())
-    }
+    file.read_to_string(&mut buf)?;
+    Ok(buf)
 }
 
 fn main() {
