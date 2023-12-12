@@ -2,9 +2,6 @@ use std::env::args;
 use std::fs::File;
 use std::io::{stdin, Error, Read};
 
-mod core;
-use core::error::set_panic_handler;
-
 #[derive(PartialEq)]
 enum Options {
     Help
@@ -104,11 +101,10 @@ fn cat_from_file(filename: &String) -> Result<String, Error> {
 }
 
 fn main() {
-    set_panic_handler();
-
     let args = args().collect::<Vec<String>>();
+
     match build_ctx(args) {
         Ok(ctx) => cat(ctx),
-        Err(e) => panic!("{e}")
+        Err(e) => println!("{e}")
     }
 }
