@@ -7,25 +7,17 @@ enum Options {
     Help
 }
 
-struct ProgCtx {
+struct CliOptions {
     files: Vec<String>,
     flags: Vec<Options>
 }
 
-impl ProgCtx {
-    fn new() -> ProgCtx {
-        ProgCtx {
+impl CliOptions {
+    fn new() -> Self {
+        Self {
             files: Vec::new(),
             flags: Vec::new()
         }
-    }
-
-    fn has_option(&self, opt: Options) -> bool {
-        self.flags.contains(&opt)
-    }
-
-    fn has_files(&self) -> bool {
-        self.files.len() > 0
     }
 }
 
@@ -39,13 +31,13 @@ fn show_usage() {
     println!("{usage}")
 }
 
-fn build_ctx(args: Vec<String>) -> Result<ProgCtx, String> {
-    let mut ctx = ProgCtx::new();
+fn get_options(args: Vec<String>) -> Result<CliOptions, String> {
+    let mut opts = CliOptions::new();
 
     for arg in &args[1..] {
         match arg.as_str() {
             "--help" => {
-                ctx.flags.push(Options::Help);
+                opts.flags.push(Options::Help);
                 break
             },
             _ => {
@@ -54,23 +46,23 @@ fn build_ctx(args: Vec<String>) -> Result<ProgCtx, String> {
                                       Try cat \"--help\" for more informations.");
                     return Err(msg)
                 } else {
-                    ctx.files.push(arg.clone())
+                    opts.files.push(arg.clone())
                 }
             }
         }
     }
 
-    Ok(ctx)
+    Ok(opts)
 }
 
-fn cat(ctx: ProgCtx) {
-    if ctx.has_option(Options::Help) {
+fn cat(opts: CliOptions) {
+    if opts.flags.contains(&Options::Help) {
         show_usage();
         return
     }
 
-    if ctx.has_files() {
-        for file in ctx.files {
+    if opts.files.len() > 0 {
+        for file in opts.files {
             match cat_from_file(&file) {
                 Ok(buf) => print!("{buf}"),
                 Err(e) => println!("cat: {file}: {}", e)
@@ -103,7 +95,7 @@ fn cat_from_file(filename: &String) -> Result<String, Error> {
 fn main() {
     let args = args().collect::<Vec<String>>();
 
-    match build_ctx(args) {
+    match get_options(args) {
         Ok(ctx) => cat(ctx),
         Err(e) => println!("{e}")
     }
