@@ -7,16 +7,81 @@ enum Options {
     Help
 }
 
-struct CliOptions {
+struct CatOptions {
     files: Vec<String>,
-    flags: Vec<Options>
+    options: Vec<Options>
 }
 
-impl CliOptions {
+struct Cat {
+    opts: CatOptions
+}
+
+impl CatOptions {
     fn new() -> Self {
         Self {
             files: Vec::new(),
-            flags: Vec::new()
+            options: Vec::new()
+        }
+    }
+
+    fn has_option(&self, opt: Options) -> bool {
+        self.options.contains(&opt)
+    }
+
+    fn add_option(&mut self, opt: Options) {
+        self.options.push(opt)
+    }
+
+    fn has_files(&self) -> bool {
+        ! self.files.is_empty()
+    }
+
+    fn add_file(&mut self, file: String) {
+        self.files.push(file)
+    }
+}
+
+impl Cat {
+    fn new(opts: CatOptions) -> Self {
+        Self {
+            opts
+        }
+    }
+
+    fn from_file(filename: &String) -> Result<String, Error> {
+        let mut buf = String::new();
+        let mut file = File::open(filename)?;
+
+        file.read_to_string(&mut buf)?;
+        Ok(buf)
+    }
+
+    fn from_stdin() {
+        let mut buf = String::new();
+
+        loop {
+            stdin().read_line(&mut buf).unwrap();
+
+            print!("{buf}");
+            buf.clear()
+        }
+    }
+
+    fn run(&self) {
+        if self.opts.has_option(Options::Help) {
+            show_usage();
+            return
+        }
+
+        if self.opts.has_files() {
+            for file in &self.opts.files {
+                match Self::from_file(&file) {
+                    Ok(buf) => print!("{buf}"),
+                    Err(e) => println!("cat: {file}: {}", e)
+                }
+            }
+        } else {
+            Self::from_stdin()
         }
     }
 }
@@ -31,13 +96,13 @@ fn show_usage() {
     println!("{usage}")
 }
 
-fn get_options(args: Vec<String>) -> Result<CliOptions, String> {
-    let mut opts = CliOptions::new();
+fn parse_cli_args(args: Vec<String>) -> Result<CatOptions, String> {
+    let mut opts = CatOptions::new();
 
     for arg in &args[1..] {
         match arg.as_str() {
             "--help" => {
-                opts.flags.push(Options::Help);
+                opts.add_option(Options::Help);
                 break
             },
             _ => {
@@ -46,7 +111,7 @@ fn get_options(args: Vec<String>) -> Result<CliOptions, String> {
                                       Try cat \"--help\" for more informations.");
                     return Err(msg)
                 } else {
-                    opts.files.push(arg.clone())
+                    opts.add_file(arg.clone())
                 }
             }
         }
@@ -55,48 +120,15 @@ fn get_options(args: Vec<String>) -> Result<CliOptions, String> {
     Ok(opts)
 }
 
-fn cat(opts: CliOptions) {
-    if opts.flags.contains(&Options::Help) {
-        show_usage();
-        return
-    }
-
-    if opts.files.len() > 0 {
-        for file in opts.files {
-            match cat_from_file(&file) {
-                Ok(buf) => print!("{buf}"),
-                Err(e) => println!("cat: {file}: {}", e)
-            }
-        }
-    } else {
-        cat_from_stdin()
-    }
-}
-
-fn cat_from_stdin() {
-    let mut buf = String::new();
-
-    loop {
-        stdin().read_line(&mut buf).unwrap();
-
-        print!("{buf}");
-        buf.clear()
-    }
-}
-
-fn cat_from_file(filename: &String) -> Result<String, Error> {
-    let mut buf = String::new();
-    let mut file = File::open(filename)?;
-
-    file.read_to_string(&mut buf)?;
-    Ok(buf)
-}
-
 fn main() {
     let args = args().collect::<Vec<String>>();
 
-    match get_options(args) {
-        Ok(ctx) => cat(ctx),
+    match parse_cli_args(args) {
+        Ok(opts) => {
+            let cat = Cat::new(opts);
+
+            cat.run()
+        },
         Err(e) => println!("{e}")
     }
 }
