@@ -3,13 +3,14 @@ use std::fs::File;
 use std::io::{stdin, Error, Read};
 
 #[derive(PartialEq)]
-enum Options {
-    Help
+enum Flags {
+    Help,
+    ShowVersion
 }
 
 struct CatOptions {
     files: Vec<String>,
-    options: Vec<Options>
+    flags: Vec<Flags>
 }
 
 struct Cat {
@@ -20,16 +21,16 @@ impl CatOptions {
     fn new() -> Self {
         Self {
             files: Vec::new(),
-            options: Vec::new()
+            flags: Vec::new()
         }
     }
 
-    fn has_option(&self, opt: Options) -> bool {
-        self.options.contains(&opt)
+    fn _has_flag(&self, f: Flags) -> bool {
+        self.flags.contains(&f)
     }
 
-    fn add_option(&mut self, opt: Options) {
-        self.options.push(opt)
+    fn add_flag(&mut self, f: Flags) {
+        self.flags.push(f)
     }
 
     fn has_files(&self) -> bool {
@@ -48,7 +49,7 @@ impl Cat {
         }
     }
 
-    fn from_file(filename: &String) -> Result<String, Error> {
+    fn read_file(filename: &String) -> Result<String, Error> {
         let mut buf = String::new();
         let mut file = File::open(filename)?;
 
@@ -56,7 +57,7 @@ impl Cat {
         Ok(buf)
     }
 
-    fn from_stdin() {
+    fn read_stdin() {
         let mut buf = String::new();
 
         loop {
@@ -68,20 +69,28 @@ impl Cat {
     }
 
     fn run(&self) {
-        if self.opts.has_option(Options::Help) {
-            show_usage();
-            return
+        for flag in &self.opts.flags {
+            match flag {
+                Flags::Help => {
+                    show_usage();
+                    return
+                },
+                Flags::ShowVersion => {
+                    show_version();
+                    return
+                }
+            }
         }
 
         if self.opts.has_files() {
             for file in &self.opts.files {
-                match Self::from_file(&file) {
+                match Self::read_file(&file) {
                     Ok(buf) => print!("{buf}"),
                     Err(e) => println!("cat: {file}: {}", e)
                 }
             }
         } else {
-            Self::from_stdin()
+            Self::read_stdin()
         }
     }
 }
@@ -91,9 +100,14 @@ fn show_usage() {
         "Usage: cat [OPTION]... [FILE]...\n\
          Concatenate FILE(S) to the standard output.\n\n\
          If FILE is not specified or be - , read the standard input.\n\n\
-         \t--help        display this help and exit";
+         \t--help        display this help and exit\n\
+         \t--version     output version information and exit";
 
     println!("{usage}")
+}
+
+fn show_version() {
+    println!("cat {}", env!("CARGO_PKG_VERSION"))
 }
 
 fn parse_cli_args(args: Vec<String>) -> Result<CatOptions, String> {
@@ -101,10 +115,8 @@ fn parse_cli_args(args: Vec<String>) -> Result<CatOptions, String> {
 
     for arg in &args[1..] {
         match arg.as_str() {
-            "--help" => {
-                opts.add_option(Options::Help);
-                break
-            },
+            "--help" => opts.add_flag(Flags::Help),
+            "--version" => opts.add_flag(Flags::ShowVersion),
             _ => {
                 if arg.starts_with("-") {
                     let msg = format!("cat: invalid option -- \"{arg}\"\n\
