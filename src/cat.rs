@@ -5,6 +5,7 @@ use std::io::{stdin, Error, Read};
 #[derive(PartialEq)]
 enum Flags {
     Help,
+    ReadFromInput,
     ShowVersion
 }
 
@@ -78,6 +79,10 @@ impl Cat {
                 Flags::ShowVersion => {
                     show_version();
                     return
+                },
+                Flags::ReadFromInput => {
+                    Self::read_stdin();
+                    return
                 }
             }
         }
@@ -117,6 +122,7 @@ fn parse_cli_args(args: Vec<String>) -> Result<CatOptions, String> {
         match arg.as_str() {
             "--help" => opts.add_flag(Flags::Help),
             "--version" => opts.add_flag(Flags::ShowVersion),
+            "-" => opts.add_flag(Flags::ReadFromInput),
             _ => {
                 if arg.starts_with("-") {
                     let msg = format!("cat: invalid option -- \"{arg}\"\n\
