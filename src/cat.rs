@@ -34,12 +34,16 @@ impl CatOptions {
         self.flags.push(f)
     }
 
-    fn has_files(&self) -> bool {
-        ! self.files.is_empty()
+    fn has_flags(&self) -> bool {
+        ! self.flags.is_empty()
     }
 
     fn add_file(&mut self, file: String) {
         self.files.push(file)
+    }
+
+    fn has_files(&self) -> bool {
+        ! self.files.is_empty()
     }
 }
 
@@ -70,8 +74,8 @@ impl Cat {
     }
 
     fn run(&self) {
-        for flag in &self.opts.flags {
-            match flag {
+        if self.opts.has_flags() {
+            match self.opts.flags[0] {
                 Flags::Help => {
                     show_usage();
                     return
