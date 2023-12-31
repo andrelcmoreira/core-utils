@@ -3,15 +3,20 @@ use std::fs::File;
 use std::io::{stdin, Error, Read};
 
 #[derive(PartialEq)]
-enum Flags {
+enum FlagParam {
     Help,
-    ReadFromInput,
     ShowVersion
 }
 
+#[derive(PartialEq)]
+enum InputParam {
+    File(String),
+    StdinFile
+}
+
 struct CatOptions {
-    files: Vec<String>,
-    flags: Vec<Flags>
+    input: Vec<InputParam>,
+    flags: Vec<FlagParam>
 }
 
 struct Cat {
@@ -21,29 +26,21 @@ struct Cat {
 impl CatOptions {
     fn new() -> Self {
         Self {
-            files: Vec::new(),
+            input: Vec::new(),
             flags: Vec::new()
         }
     }
 
-    fn _has_flag(&self, f: Flags) -> bool {
+    fn has_flag(&self, f: FlagParam) -> bool {
         self.flags.contains(&f)
     }
 
-    fn add_flag(&mut self, f: Flags) {
+    fn add_flag(&mut self, f: FlagParam) {
         self.flags.push(f)
     }
 
-    fn has_flags(&self) -> bool {
-        ! self.flags.is_empty()
-    }
-
-    fn add_file(&mut self, file: String) {
-        self.files.push(file)
-    }
-
-    fn has_files(&self) -> bool {
-        ! self.files.is_empty()
+    fn add_input(&mut self, file: InputParam) {
+        self.input.push(file)
     }
 }
 
@@ -74,24 +71,29 @@ impl Cat {
     }
 
     fn run(&self) {
-        if self.opts.has_flags() {
-            match self.opts.flags[0] {
-                Flags::Help => show_usage(),
-                Flags::ShowVersion => show_version(),
-                Flags::ReadFromInput => Self::read_stdin()
-            };
+        if self.opts.has_flag(FlagParam::Help) {
+            show_usage();
             return
         }
 
-        if self.opts.has_files() {
-            for file in &self.opts.files {
-                match Self::read_file(&file) {
-                    Ok(buf) => print!("{buf}"),
-                    Err(e) => println!("cat: {file}: {}", e)
+        if self.opts.has_flag(FlagParam::ShowVersion) {
+            show_version();
+            return
+        }
+
+        for opt in &self.opts.input {
+            match &opt {
+                InputParam::StdinFile => {
+                    Self::read_stdin();
+                    return
+                },
+                InputParam::File(f) => {
+                    match Self::read_file(&f) {
+                        Ok(buf) => print!("{buf}"),
+                        Err(e) => println!("cat: {f}: {}", e)
+                    }
                 }
-            }
-        } else {
-            Self::read_stdin()
+            };
         }
     }
 }
@@ -116,16 +118,16 @@ fn parse_cli_args(args: Vec<String>) -> Result<CatOptions, String> {
 
     for arg in &args[1..] {
         match arg.as_str() {
-            "--help" => opts.add_flag(Flags::Help),
-            "--version" => opts.add_flag(Flags::ShowVersion),
-            "-" => opts.add_flag(Flags::ReadFromInput),
+            "--help" => opts.add_flag(FlagParam::Help),
+            "--version" => opts.add_flag(FlagParam::ShowVersion),
+            "-" => opts.add_input(InputParam::StdinFile),
             _ => {
                 if arg.starts_with("-") {
                     let msg = format!("cat: invalid option -- \"{arg}\"\n\
                                       Try cat \"--help\" for more informations.");
                     return Err(msg)
                 } else {
-                    opts.add_file(arg.clone())
+                    opts.add_input(InputParam::File(arg.clone()))
                 }
             }
         }
