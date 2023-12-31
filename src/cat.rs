@@ -76,19 +76,11 @@ impl Cat {
     fn run(&self) {
         if self.opts.has_flags() {
             match self.opts.flags[0] {
-                Flags::Help => {
-                    show_usage();
-                    return
-                },
-                Flags::ShowVersion => {
-                    show_version();
-                    return
-                },
-                Flags::ReadFromInput => {
-                    Self::read_stdin();
-                    return
-                }
-            }
+                Flags::Help => show_usage(),
+                Flags::ShowVersion => show_version(),
+                Flags::ReadFromInput => Self::read_stdin()
+            };
+            return
         }
 
         if self.opts.has_files() {
