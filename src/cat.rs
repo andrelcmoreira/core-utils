@@ -11,7 +11,7 @@ enum FlagParam {
 #[derive(PartialEq)]
 enum InputParam {
     File(String),
-    StdinFile
+    Stdin
 }
 
 struct CatOptions {
@@ -39,8 +39,8 @@ impl CatOptions {
         self.flags.push(f)
     }
 
-    fn add_input(&mut self, file: InputParam) {
-        self.input.push(file)
+    fn add_input(&mut self, input: InputParam) {
+        self.input.push(input)
     }
 }
 
@@ -83,7 +83,7 @@ impl Cat {
 
         for opt in &self.opts.input {
             match &opt {
-                InputParam::StdinFile => {
+                InputParam::Stdin => {
                     Self::read_stdin();
                     return
                 },
@@ -104,7 +104,11 @@ fn show_usage() {
          Concatenate FILE(S) to the standard output.\n\n\
          If FILE is not specified or be - , read the standard input.\n\n\
          \t--help        display this help and exit\n\
-         \t--version     output version information and exit";
+         \t--version     output version information and exit\n\n\
+         Examples:\n\
+         \tcat f - g\tEmits the content of f, after the standard input, and\n\
+         \t\t\tthen the content of g at the end.\n\
+         \tcat\t\tCopy the standart input to the standard output.";
 
     println!("{usage}")
 }
@@ -120,7 +124,7 @@ fn parse_cli_args(args: Vec<String>) -> Result<CatOptions, String> {
         match arg.as_str() {
             "--help" => opts.add_flag(FlagParam::Help),
             "--version" => opts.add_flag(FlagParam::ShowVersion),
-            "-" => opts.add_input(InputParam::StdinFile),
+            "-" => opts.add_input(InputParam::Stdin),
             _ => {
                 if arg.starts_with("-") {
                     let msg = format!("cat: invalid option -- \"{arg}\"\n\
