@@ -1,6 +1,6 @@
 use std::env::args;
 use std::fs::File;
-use std::io::{stdin, Error, Read};
+use std::io::{stdin, Error, ErrorKind, Read};
 
 #[derive(PartialEq)]
 enum FlagParam {
@@ -114,7 +114,7 @@ fn show_version() {
     println!("cat {}", env!("CARGO_PKG_VERSION"))
 }
 
-fn parse_cli_args(args: Vec<String>) -> Result<CatOptions, String> {
+fn parse_cli_args(args: Vec<String>) -> Result<CatOptions, Error> {
     let mut opts = CatOptions::new();
 
     for arg in &args[1..] {
@@ -124,9 +124,9 @@ fn parse_cli_args(args: Vec<String>) -> Result<CatOptions, String> {
             "-" => opts.add_input(InputParam::Stdin),
             _ => {
                 if arg.starts_with("-") {
-                    let msg = format!("cat: invalid option -- \"{arg}\"\n\
-                                      Try cat \"--help\" for more informations.");
-                    return Err(msg)
+                    let m = format!("cat: invalid option -- \"{arg}\"\n\
+                                    Try cat \"--help\" for more informations.");
+                    return Err(Error::new(ErrorKind::InvalidInput, m))
                 } else {
                     opts.add_input(InputParam::File(arg.clone()))
                 }
