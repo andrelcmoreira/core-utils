@@ -5,6 +5,7 @@ use std::io::{stdin, Error, ErrorKind, Read};
 #[derive(PartialEq)]
 enum FlagParam {
     Help,
+    ShowLineNumber,
     ShowVersion
 }
 
@@ -21,6 +22,16 @@ struct CatOptions {
 
 struct Cat {
     opts: CatOptions
+}
+
+trait FileContent {
+    fn add_lines(&self);
+}
+
+impl FileContent for String {
+    fn add_lines(&self) {
+        // TODO
+    }
 }
 
 impl CatOptions {
@@ -51,11 +62,16 @@ impl Cat {
         }
     }
 
-    fn read_file(filename: &String) -> Result<String, Error> {
+    fn read_file(&self, filename: &String) -> Result<String, Error> {
         let mut buf = String::new();
         let mut file = File::open(filename)?;
 
         file.read_to_string(&mut buf)?;
+
+        if self.opts.has_flag(FlagParam::ShowLineNumber) {
+            buf.add_lines()
+        }
+
         Ok(buf)
     }
 
@@ -85,7 +101,7 @@ impl Cat {
             match &opt {
                 InputParam::Stdin => Self::read_stdin(),
                 InputParam::File(f) => {
-                    match Self::read_file(&f) {
+                    match self.read_file(&f) {
                         Ok(buf) => print!("{buf}"),
                         Err(e) => println!("cat: {f}: {}", e)
                     }
@@ -101,6 +117,7 @@ fn show_usage() {
          Concatenate FILE(S) to the standard output.\n\n\
          If FILE is not specified or be - , read the standard input.\n\n\
          \t--help        display this help and exit\n\
+         \t-n, --number  number all output lines\n\
          \t--version     output version information and exit\n\n\
          Examples:\n\
          \tcat f - g\tEmits the content of f, after the standard input, and\n\
@@ -120,6 +137,7 @@ fn parse_cli_args(args: Vec<String>) -> Result<CatOptions, Error> {
     for arg in &args[1..] {
         match arg.as_str() {
             "--help" => opts.add_flag(FlagParam::Help),
+            "-n" | "--number" => opts.add_flag(FlagParam::ShowLineNumber),
             "--version" => opts.add_flag(FlagParam::ShowVersion),
             "-" => opts.add_input(InputParam::Stdin),
             _ => {
