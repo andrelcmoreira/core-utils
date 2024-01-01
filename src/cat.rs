@@ -15,7 +15,7 @@ enum InputParam {
 }
 
 struct CatOptions {
-    input: Vec<InputParam>,
+    inputs: Vec<InputParam>,
     flags: Vec<FlagParam>
 }
 
@@ -26,7 +26,7 @@ struct Cat {
 impl CatOptions {
     fn new() -> Self {
         Self {
-            input: Vec::new(),
+            inputs: Vec::new(),
             flags: Vec::new()
         }
     }
@@ -40,7 +40,7 @@ impl CatOptions {
     }
 
     fn add_input(&mut self, input: InputParam) {
-        self.input.push(input)
+        self.inputs.push(input)
     }
 }
 
@@ -81,19 +81,16 @@ impl Cat {
             return
         }
 
-        for opt in &self.opts.input {
+        for opt in &self.opts.inputs {
             match &opt {
-                InputParam::Stdin => {
-                    Self::read_stdin();
-                    return
-                },
+                InputParam::Stdin => Self::read_stdin(),
                 InputParam::File(f) => {
                     match Self::read_file(&f) {
                         Ok(buf) => print!("{buf}"),
                         Err(e) => println!("cat: {f}: {}", e)
                     }
                 }
-            };
+            }
         }
     }
 }
