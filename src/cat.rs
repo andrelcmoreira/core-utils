@@ -25,12 +25,26 @@ struct Cat {
 }
 
 trait FileContent {
-    fn add_lines(&self);
+    fn add_line_number(&mut self);
 }
 
 impl FileContent for String {
-    fn add_lines(&self) {
-        // TODO
+    fn add_line_number(&mut self) {
+        let mut tmp = String::new();
+        let mut count = 1;
+
+        for line in self.lines() {
+            let l = format!("    {count}\t{line}");
+
+            tmp.push_str(l.as_str());
+            tmp.push('\n');
+            count += 1
+        }
+
+        if ! tmp.is_empty() {
+            self.clear();
+            self.push_str(tmp.as_str())
+        }
     }
 }
 
@@ -69,7 +83,7 @@ impl Cat {
         file.read_to_string(&mut buf)?;
 
         if self.opts.has_flag(FlagParam::ShowLineNumber) {
-            buf.add_lines()
+            buf.add_line_number()
         }
 
         Ok(buf)
