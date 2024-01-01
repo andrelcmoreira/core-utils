@@ -36,10 +36,9 @@ impl FileContent for String {
         let mut count = 1;
 
         for line in self.lines() {
-            let l = format!("    {count}\t{line}");
+            let l = format!("    {count}\t{line}\n");
 
             tmp.push_str(l.as_str());
-            tmp.push('\n');
             count += 1
         }
 
