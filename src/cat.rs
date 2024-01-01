@@ -6,6 +6,7 @@ use std::io::{stdin, Error, ErrorKind, Read};
 enum FlagParam {
     Help,
     ShowLineNumber,
+    ShowNonPrinting,
     ShowVersion
 }
 
@@ -26,6 +27,7 @@ struct Cat {
 
 trait FileContent {
     fn add_line_number(&mut self);
+    fn add_non_printing_chars(&mut self);
 }
 
 impl FileContent for String {
@@ -45,6 +47,10 @@ impl FileContent for String {
             self.clear();
             self.push_str(tmp.as_str())
         }
+    }
+
+    fn add_non_printing_chars(&mut self) {
+        // TODO
     }
 }
 
@@ -84,6 +90,10 @@ impl Cat {
 
         if self.opts.has_flag(FlagParam::ShowLineNumber) {
             buf.add_line_number()
+        }
+
+        if self.opts.has_flag(FlagParam::ShowNonPrinting) {
+            buf.add_non_printing_chars()
         }
 
         Ok(buf)
@@ -130,9 +140,10 @@ fn show_usage() {
         "Usage: cat [OPTION]... [FILE]...\n\
          Concatenate FILE(S) to the standard output.\n\n\
          If FILE is not specified or be - , read the standard input.\n\n\
-         \t--help        display this help and exit\n\
-         \t-n, --number  number all output lines\n\
-         \t--version     output version information and exit\n\n\
+         \t-n, --number\t\tnumber all output lines\n\
+         \t-v, --show-nonprinting\tuse the notation ^ and M-, except for LFD and TAB\n\
+         \t--help\t\t\tdisplay this help and exit\n\
+         \t--version\t\toutput version information and exit\n\n\
          Examples:\n\
          \tcat f - g\tEmits the content of f, after the standard input, and\n\
          \t\t\tthen the content of g at the end.\n\
@@ -152,6 +163,8 @@ fn parse_cli_args(args: Vec<String>) -> Result<CatOptions, Error> {
         match arg.as_str() {
             "--help" => opts.add_flag(FlagParam::Help),
             "-n" | "--number" => opts.add_flag(FlagParam::ShowLineNumber),
+            "-v" | "--show-nonprinting" =>
+                opts.add_flag(FlagParam::ShowNonPrinting),
             "--version" => opts.add_flag(FlagParam::ShowVersion),
             "-" => opts.add_input(InputParam::Stdin),
             _ => {
