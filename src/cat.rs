@@ -41,7 +41,7 @@ impl FileContent for String {
 
             tmp.push_str(l.as_str());
             if self.has_new_line() {
-                tmp.push_str("\n");
+                tmp.push_str("\n")
             }
             count += 1
         }
@@ -53,9 +53,9 @@ impl FileContent for String {
     }
 
     fn has_new_line(&self) -> bool {
-        let last = self.bytes().last().unwrap();
+        let last_ch = self.bytes().last();
 
-        if last == 0x0a { true } else { false }
+        if let Some(0x0a) = last_ch { true } else { false }
     }
 
     fn add_non_printing_chars(&mut self) {
