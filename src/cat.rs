@@ -28,6 +28,7 @@ struct Cat {
 trait FileContent {
     fn add_line_number(&mut self);
     fn add_non_printing_chars(&mut self);
+    fn has_new_line(&self) -> bool;
 }
 
 impl FileContent for String {
@@ -36,9 +37,12 @@ impl FileContent for String {
         let mut count = 1;
 
         for line in self.lines() {
-            let l = format!("    {count}\t{line}\n");
+            let l = format!("    {count}\t{line}");
 
             tmp.push_str(l.as_str());
+            if self.has_new_line() {
+                tmp.push_str("\n");
+            }
             count += 1
         }
 
@@ -46,6 +50,12 @@ impl FileContent for String {
             self.clear();
             self.push_str(tmp.as_str())
         }
+    }
+
+    fn has_new_line(&self) -> bool {
+        let last = self.bytes().last().unwrap();
+
+        if last == 0x0a { true } else { false }
     }
 
     fn add_non_printing_chars(&mut self) {
@@ -69,8 +79,8 @@ impl CatOptions {
         self.flags.push(f)
     }
 
-    fn add_input(&mut self, input: InputParam) {
-        self.inputs.push(input)
+    fn add_input(&mut self, i: InputParam) {
+        self.inputs.push(i)
     }
 }
 
@@ -82,20 +92,20 @@ impl Cat {
     }
 
     fn read_file(&self, filename: &String) -> Result<String, Error> {
-        let mut buf = String::new();
+        let mut buffer = String::new();
         let mut file = File::open(filename)?;
 
-        file.read_to_string(&mut buf)?;
-
-        if self.opts.has_flag(FlagParam::ShowLineNumber) {
-            buf.add_line_number()
-        }
+        file.read_to_string(&mut buffer)?;
 
         if self.opts.has_flag(FlagParam::ShowNonPrinting) {
-            buf.add_non_printing_chars()
+            buffer.add_non_printing_chars()
         }
 
-        Ok(buf)
+        if self.opts.has_flag(FlagParam::ShowLineNumber) {
+            buffer.add_line_number()
+        }
+
+        Ok(buffer)
     }
 
     fn read_stdin() {
