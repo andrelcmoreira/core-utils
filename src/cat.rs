@@ -28,7 +28,7 @@ struct Cat {
 trait FileContent {
     fn add_line_number(&mut self);
     fn add_non_printing_chars(&mut self);
-    fn has_new_line(&self) -> bool;
+    fn has_line_feed(&self) -> bool;
 }
 
 impl FileContent for String {
@@ -40,7 +40,7 @@ impl FileContent for String {
             let l = format!("    {count}\t{line}");
 
             tmp.push_str(l.as_str());
-            if self.has_new_line() {
+            if self.has_line_feed() {
                 tmp.push_str("\n")
             }
             count += 1
@@ -52,7 +52,7 @@ impl FileContent for String {
         }
     }
 
-    fn has_new_line(&self) -> bool {
+    fn has_line_feed(&self) -> bool {
         let last_ch = self.bytes().last();
 
         if let Some(0x0a) = last_ch { true } else { false }
