@@ -28,7 +28,6 @@ struct Cat {
 trait FileContent {
     fn add_line_number(&mut self);
     fn add_non_printing_chars(&mut self);
-    fn has_line_feed(&self) -> bool;
 }
 
 impl FileContent for String {
@@ -37,12 +36,9 @@ impl FileContent for String {
         let mut count = 1;
 
         for line in self.lines() {
-            let l = format!("    {count}\t{line}");
+            let l = format!("{count}\t{line}\n"); // FIXME: the '\n' char must not be here
 
             tmp.push_str(l.as_str());
-            if self.has_line_feed() {
-                tmp.push_str("\n")
-            }
             count += 1
         }
 
@@ -50,12 +46,6 @@ impl FileContent for String {
             self.clear();
             self.push_str(tmp.as_str())
         }
-    }
-
-    fn has_line_feed(&self) -> bool {
-        let last_ch = self.bytes().last();
-
-        if let Some(0x0a) = last_ch { true } else { false }
     }
 
     fn add_non_printing_chars(&mut self) {
@@ -95,6 +85,7 @@ impl Cat {
         let mut buffer = String::new();
         let mut file = File::open(filename)?;
 
+        // FIXME: for special files (/dev like) we stay here forever
         file.read_to_string(&mut buffer)?;
 
         if self.opts.has_flag(FlagParam::ShowNonPrinting) {
