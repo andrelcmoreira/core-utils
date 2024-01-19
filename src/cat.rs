@@ -35,24 +35,23 @@ trait FileContent {
 impl FileContent for String {
     fn add_line_number(&mut self) {
         let mut tmp = String::new();
-        let mut buffer = String::new();
+        let mut must_add_line_no = true;
         let mut count = 1;
 
         for byte in self.bytes() {
+            if must_add_line_no {
+                tmp.push_str(format!("{count}\t").as_str());
+                must_add_line_no = false;
+            }
+
             let ch = byte as char;
 
-            match ch {
-                '\n' => {
-                    tmp.push_str(format!("{count}\t{buffer}\n").as_str());
-                    buffer.clear();
-                    count += 1
-                },
-                _ => buffer.push(ch)
-            };
-        }
+            if ch == '\n' {
+                must_add_line_no = true;
+                count += 1
+            }
 
-        if ! buffer.is_empty() && tmp.is_empty() {
-            tmp.push_str(format!("{count}\t{buffer}").as_str());
+            tmp.push(ch);
         }
 
         if ! tmp.is_empty() {
