@@ -67,8 +67,13 @@ impl FileContent for String {
     fn add_end_char(&mut self) {
         let mut tmp = String::new();
 
-        for line in self.lines() {
-            tmp.push_str(format!("{line}$\n").as_str());  // FIXME: the '\n' char must not be here
+        for byte in self.bytes() {
+            let ch = byte as char;
+
+            match ch {
+                '\n' => tmp.push_str("$\n"),
+                _ => tmp.push(ch)
+            }
         }
 
         if ! tmp.is_empty() {
