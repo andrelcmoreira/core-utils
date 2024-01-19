@@ -5,6 +5,7 @@ use std::io::{stdin, Error, ErrorKind, Read};
 #[derive(PartialEq)]
 enum FlagParam {
     Help,
+    ShowEnds,
     ShowLineNumber,
     ShowNonPrinting,
     ShowVersion
@@ -28,6 +29,7 @@ struct Cat {
 trait FileContent {
     fn add_line_number(&mut self);
     fn add_non_printing_chars(&mut self);
+    fn add_end_char(&mut self);
 }
 
 impl FileContent for String {
@@ -50,6 +52,19 @@ impl FileContent for String {
 
     fn add_non_printing_chars(&mut self) {
         // TODO
+    }
+
+    fn add_end_char(&mut self) {
+        let mut tmp = String::new();
+
+        for line in self.lines() {
+            tmp.push_str(format!("{line}$\n").as_str());  // FIXME: the '\n' char must not be here
+        }
+
+        if ! tmp.is_empty() {
+            self.clear();
+            self.push_str(tmp.as_str())
+        }
     }
 }
 
@@ -87,6 +102,10 @@ impl Cat {
 
         // FIXME: for special files (/dev like) we stay here forever
         file.read_to_string(&mut buffer)?;
+
+        if self.opts.has_flag(FlagParam::ShowEnds) {
+            buffer.add_end_char()
+        }
 
         if self.opts.has_flag(FlagParam::ShowNonPrinting) {
             buffer.add_non_printing_chars()
@@ -140,6 +159,7 @@ fn show_usage() {
         "Usage: cat [OPTION]... [FILE]...\n\
          Concatenate FILE(S) to the standard output.\n\n\
          If FILE is not specified or be - , read the standard input.\n\n\
+         \t-E, --show-ends\t\tshow $ at the end of each line\n\
          \t-n, --number\t\tnumber all output lines\n\
          \t-v, --show-nonprinting\tuse the notation ^ and M-, except for LFD and TAB\n\
          \t--help\t\t\tdisplay this help and exit\n\
@@ -161,6 +181,7 @@ fn parse_cli_args(args: Vec<String>) -> Result<CatOptions, Error> {
 
     for arg in &args[1..] {
         match arg.as_str() {
+            "-E" => opts.add_flag(FlagParam::ShowEnds),
             "--help" => opts.add_flag(FlagParam::Help),
             "-n" | "--number" => opts.add_flag(FlagParam::ShowLineNumber),
             "-v" | "--show-nonprinting" =>
