@@ -41,17 +41,15 @@ impl FileContent for String {
         for byte in self.bytes() {
             if must_add_line_no {
                 tmp.push_str(format!("{count}\t").as_str());
-                must_add_line_no = false;
+                must_add_line_no = false
             }
 
-            let ch = byte as char;
-
-            if ch == '\n' {
+            if byte == 0xa {
                 must_add_line_no = true;
                 count += 1
             }
 
-            tmp.push(ch);
+            tmp.push(byte as char);
         }
 
         if ! tmp.is_empty() {
@@ -61,18 +59,28 @@ impl FileContent for String {
     }
 
     fn add_non_printing_chars(&mut self) {
-        // TODO
+        let mut tmp = String::new();
+
+        for byte in self.bytes() {
+            match byte {
+                0xd => tmp.push_str("^M"),
+                _ => tmp.push(byte as char)
+            }
+        }
+
+        if ! tmp.is_empty() {
+            self.clear();
+            self.push_str(tmp.as_str())
+        }
     }
 
     fn add_end_char(&mut self) {
         let mut tmp = String::new();
 
         for byte in self.bytes() {
-            let ch = byte as char;
-
-            match ch {
-                '\n' => tmp.push_str("$\n"),
-                _ => tmp.push(ch)
+            match byte {
+                0xa => tmp.push_str("$\n"),
+                _ => tmp.push(byte as char)
             }
         }
 
