@@ -27,6 +27,10 @@ struct Cat {
     opts: CatOptions
 }
 
+const TAB_CHAR: u8 = 0x9;
+const LF_CHAR: u8 = 0xa;
+const CR_CHAR: u8 = 0xd;
+
 trait FileContent {
     fn add_line_number(&mut self);
     fn add_cr(&mut self);
@@ -46,7 +50,7 @@ impl FileContent for String {
                 must_add_line_no = false
             }
 
-            if byte == 0xa {
+            if byte == LF_CHAR {
                 must_add_line_no = true;
                 count += 1
             }
@@ -65,7 +69,7 @@ impl FileContent for String {
 
         for byte in self.bytes() {
             match byte {
-                0xd => tmp.push_str("^M"),
+                CR_CHAR => tmp.push_str("^M"),
                 _ => tmp.push(byte as char)
             }
         }
@@ -81,7 +85,7 @@ impl FileContent for String {
 
         for byte in self.bytes() {
             match byte {
-                0xa => tmp.push_str("$\n"),
+                LF_CHAR => tmp.push_str("$\n"),
                 _ => tmp.push(byte as char)
             }
         }
@@ -97,7 +101,7 @@ impl FileContent for String {
 
         for byte in self.bytes() {
             match byte {
-                0x9 => tmp.push_str("^I"),
+                TAB_CHAR => tmp.push_str("^I"),
                 _ => tmp.push(byte as char)
             }
         }
