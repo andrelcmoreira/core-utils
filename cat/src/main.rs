@@ -5,7 +5,7 @@ use std::io::{stdin, Error, ErrorKind, Read};
 #[cfg(test)]
 mod test;
 
-#[derive(PartialEq)]
+#[derive(Debug, PartialEq)]
 enum FlagParam {
     Help,
     ShowEnds,
@@ -15,12 +15,13 @@ enum FlagParam {
     ShowVersion
 }
 
-#[derive(PartialEq)]
+#[derive(Debug, PartialEq)]
 enum InputParam {
     File(String),
     Stdin
 }
 
+#[derive(Debug)]
 struct CatOptions {
     inputs: Vec<InputParam>,
     flags: Vec<FlagParam>
