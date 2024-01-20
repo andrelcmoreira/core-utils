@@ -8,6 +8,7 @@ enum FlagParam {
     ShowEnds,
     ShowLineNumber,
     ShowNonPrinting,
+    ShowTabs,
     ShowVersion
 }
 
@@ -28,8 +29,9 @@ struct Cat {
 
 trait FileContent {
     fn add_line_number(&mut self);
-    fn add_non_printing_chars(&mut self);
+    fn add_cr(&mut self);
     fn add_end_char(&mut self);
+    fn add_tabs(&mut self);
 }
 
 impl FileContent for String {
@@ -58,7 +60,7 @@ impl FileContent for String {
         }
     }
 
-    fn add_non_printing_chars(&mut self) {
+    fn add_cr(&mut self) {
         let mut tmp = String::new();
 
         for byte in self.bytes() {
@@ -80,6 +82,22 @@ impl FileContent for String {
         for byte in self.bytes() {
             match byte {
                 0xa => tmp.push_str("$\n"),
+                _ => tmp.push(byte as char)
+            }
+        }
+
+        if ! tmp.is_empty() {
+            self.clear();
+            self.push_str(tmp.as_str())
+        }
+    }
+
+    fn add_tabs(&mut self) {
+        let mut tmp = String::new();
+
+        for byte in self.bytes() {
+            match byte {
+                0x9 => tmp.push_str("^I"),
                 _ => tmp.push(byte as char)
             }
         }
@@ -130,8 +148,12 @@ impl Cat {
             buffer.add_end_char()
         }
 
+        if self.opts.has_flag(FlagParam::ShowTabs) {
+            buffer.add_tabs()
+        }
+
         if self.opts.has_flag(FlagParam::ShowNonPrinting) {
-            buffer.add_non_printing_chars()
+            buffer.add_cr()
         }
 
         if self.opts.has_flag(FlagParam::ShowLineNumber) {
@@ -184,6 +206,7 @@ fn show_usage() {
          If FILE is not specified or be - , read the standard input.\n\n\
          \t-E, --show-ends\t\tshow $ at the end of each line\n\
          \t-n, --number\t\tnumber all output lines\n\
+         \t-T, --show-tabs\t\tshow the tab chars as ^I\n\
          \t-v, --show-nonprinting\tuse the notation ^ and M-, except for LFD and TAB\n\
          \t--help\t\t\tdisplay this help and exit\n\
          \t--version\t\toutput version information and exit\n\n\
@@ -205,6 +228,7 @@ fn parse_cli_args(args: Vec<String>) -> Result<CatOptions, Error> {
     for arg in &args[1..] {
         match arg.as_str() {
             "-E" => opts.add_flag(FlagParam::ShowEnds),
+            "-T" | "--show-tabs" => opts.add_flag(FlagParam::ShowTabs),
             "--help" => opts.add_flag(FlagParam::Help),
             "-n" | "--number" => opts.add_flag(FlagParam::ShowLineNumber),
             "-v" | "--show-nonprinting" =>
