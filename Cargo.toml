@@ -1,28 +1,6 @@
-[package]
-name = "core-utils"
-version = "0.1.0"
-edition = "2021"
+[workspace]
 
-[[bin]]
-name = "cat"
-path = "src/cat.rs"
-
-[[bin]]
-name = "ls"
-path = "src/ls.rs"
-
-[[bin]]
-name = "rmdir"
-path = "src/rmdir.rs"
-
-[[bin]]
-name = "cp"
-path = "src/cp.rs"
-
-[[bin]]
-name = "pwd"
-path = "src/pwd.rs"
-
-[[bin]]
-name = "rm"
-path = "src/rm.rs"
+resolver = "1"
+members = [
+  "cat"
+]
