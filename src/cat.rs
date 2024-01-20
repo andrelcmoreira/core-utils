@@ -36,6 +36,7 @@ trait FileContent {
     fn add_cr(&mut self);
     fn add_end_char(&mut self);
     fn add_tabs(&mut self);
+    fn replace(&mut self, from: u8, to: &str);
 }
 
 impl FileContent for String {
@@ -65,44 +66,25 @@ impl FileContent for String {
     }
 
     fn add_cr(&mut self) {
-        let mut tmp = String::new();
-
-        for byte in self.bytes() {
-            match byte {
-                CR_CHAR => tmp.push_str("^M"),
-                _ => tmp.push(byte as char)
-            }
-        }
-
-        if ! tmp.is_empty() {
-            self.clear();
-            self.push_str(tmp.as_str())
-        }
+        self.replace(CR_CHAR, "^M")
     }
 
     fn add_end_char(&mut self) {
-        let mut tmp = String::new();
-
-        for byte in self.bytes() {
-            match byte {
-                LF_CHAR => tmp.push_str("$\n"),
-                _ => tmp.push(byte as char)
-            }
-        }
-
-        if ! tmp.is_empty() {
-            self.clear();
-            self.push_str(tmp.as_str())
-        }
+        self.replace(LF_CHAR, "$\n")
     }
 
     fn add_tabs(&mut self) {
+        self.replace(TAB_CHAR, "^I")
+    }
+
+    fn replace(&mut self, from: u8, to: &str) {
         let mut tmp = String::new();
 
         for byte in self.bytes() {
-            match byte {
-                TAB_CHAR => tmp.push_str("^I"),
-                _ => tmp.push(byte as char)
+            if byte == from {
+                tmp.push_str(to)
+            } else {
+                tmp.push(byte as char)
             }
         }
 
