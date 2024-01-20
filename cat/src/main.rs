@@ -2,6 +2,9 @@ use std::env::args;
 use std::fs::File;
 use std::io::{stdin, Error, ErrorKind, Read};
 
+#[cfg(test)]
+mod test;
+
 #[derive(PartialEq)]
 enum FlagParam {
     Help,
