@@ -3,7 +3,7 @@ use std::fs::File;
 use std::io::{stdin, Error, ErrorKind, Read};
 
 #[cfg(test)]
-mod test;
+mod tests;
 
 #[derive(Debug, PartialEq)]
 enum FlagParam {
