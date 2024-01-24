@@ -40,7 +40,7 @@ trait FileContent {
     fn add_cr(&mut self);
     fn add_end_char(&mut self);
     fn add_tabs(&mut self);
-    fn replace(&mut self, from: u8, to: &str);
+    fn replace_byte(&mut self, from: u8, to: &str);
 }
 
 impl FileContent for String {
@@ -70,18 +70,18 @@ impl FileContent for String {
     }
 
     fn add_cr(&mut self) {
-        self.replace(CR_CHAR, "^M")
+        self.replace_byte(CR_CHAR, "^M")
     }
 
     fn add_end_char(&mut self) {
-        self.replace(LF_CHAR, "$\n")
+        self.replace_byte(LF_CHAR, "$\n")
     }
 
     fn add_tabs(&mut self) {
-        self.replace(TAB_CHAR, "^I")
+        self.replace_byte(TAB_CHAR, "^I")
     }
 
-    fn replace(&mut self, from: u8, to: &str) {
+    fn replace_byte(&mut self, from: u8, to: &str) {
         let mut tmp = String::new();
 
         for byte in self.bytes() {
