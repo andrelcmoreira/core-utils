@@ -41,7 +41,7 @@ fn add_line_number_to_empty_string() {
 }
 
 #[test]
-fn show_ends_to_multi_line_str() {
+fn add_end_to_multi_line_str() {
     let mut text = "hello\nworld\nit's me\nagain\n".to_string();
     let expected = "hello$\nworld$\nit's me$\nagain$\n".to_string();
 
@@ -51,7 +51,7 @@ fn show_ends_to_multi_line_str() {
 }
 
 #[test]
-fn show_ends_to_single_line_str() {
+fn add_end_to_single_line_str() {
     let mut text = "hello\n".to_string();
     let expected = "hello$\n".to_string();
 
@@ -61,7 +61,7 @@ fn show_ends_to_single_line_str() {
 }
 
 #[test]
-fn show_ends_to_no_lf_str() {
+fn add_end_to_no_lf_str() {
     let mut text = "hello".to_string();
     let expected = "hello".to_string();
 
@@ -71,11 +71,61 @@ fn show_ends_to_no_lf_str() {
 }
 
 #[test]
-fn show_ends_to_empty_string() {
+fn add_end_to_empty_string() {
     let mut text = "".to_string();
     let expected = "".to_string();
 
     text.add_end_char();
+
+    assert_eq!(text, expected)
+}
+
+#[test]
+fn add_cr_to_multi_line_str() {
+    let mut text = "hello\r\nworld\r\nit's me\r\nagain\r\n".to_string();
+    let expected = "hello^M\nworld^M\nit's me^M\nagain^M\n".to_string();
+
+    text.add_cr();
+
+    assert_eq!(text, expected)
+}
+
+#[test]
+fn add_cr_to_str_without_cr() {
+    let mut text = "hello\nworld\nit's me\nagain\n".to_string();
+    let expected = "hello\nworld\nit's me\nagain\n".to_string();
+
+    text.add_cr();
+
+    assert_eq!(text, expected)
+}
+
+#[test]
+fn add_cr_to_str_with_single_line() {
+    let mut text = "hello\r\n".to_string();
+    let expected = "hello^M\n".to_string();
+
+    text.add_cr();
+
+    assert_eq!(text, expected)
+}
+
+#[test]
+fn add_cr_to_str_without_crlf() {
+    let mut text = "hello".to_string();
+    let expected = "hello".to_string();
+
+    text.add_cr();
+
+    assert_eq!(text, expected)
+}
+
+#[test]
+fn add_cr_to_empty_string() {
+    let mut text = "".to_string();
+    let expected = "".to_string();
+
+    text.add_cr();
 
     assert_eq!(text, expected)
 }
