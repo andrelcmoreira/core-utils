@@ -129,3 +129,33 @@ fn add_cr_to_empty_string() {
 
     assert_eq!(text, expected)
 }
+
+#[test]
+fn add_tab_char_to_str() {
+    let mut text = "hello\tworld\tit's me\tagain\n".to_string();
+    let expected = "hello^Iworld^Iit's me^Iagain\n".to_string();
+
+    text.add_tabs();
+
+    assert_eq!(text, expected)
+}
+
+#[test]
+fn add_tab_to_str_without_tab() {
+    let mut text = "hello".to_string();
+    let expected = "hello".to_string();
+
+    text.add_tabs();
+
+    assert_eq!(text, expected)
+}
+
+#[test]
+fn add_tab_to_empty_string() {
+    let mut text = "".to_string();
+    let expected = "".to_string();
+
+    text.add_tabs();
+
+    assert_eq!(text, expected)
+}
