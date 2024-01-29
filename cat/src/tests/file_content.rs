@@ -159,3 +159,33 @@ fn add_tab_to_empty_string() {
 
     assert_eq!(text, expected)
 }
+
+#[test]
+fn replace_byte_with_empty_string() {
+    let mut text = "".to_string();
+    let expected = "".to_string();
+
+    text.replace_byte(0xd, "@");
+
+    assert_eq!(text, expected)
+}
+
+#[test]
+fn replace_byte_with_multi_line_string() {
+    let mut text = "hello\nworld!".to_string();
+    let expected = "he@@o\nwor@d!".to_string();
+
+    text.replace_byte(0x6c, "@");
+
+    assert_eq!(text, expected)
+}
+
+#[test]
+fn replace_byte_with_single_line_string() {
+    let mut text = "hello, world!".to_string();
+    let expected = "he@@o, wor@d!".to_string();
+
+    text.replace_byte(0x6c, "@");
+
+    assert_eq!(text, expected)
+}
