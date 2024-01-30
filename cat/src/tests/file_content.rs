@@ -191,4 +191,14 @@ mod tests {
 
         assert_eq!(text, expected)
     }
+
+    #[test]
+    fn replace_byte_with_not_existent_byte() {
+        let mut text = "hello, world!".to_string();
+        let expected = "hello, world!".to_string();
+
+        text.replace_byte(0x7c, "@");
+
+        assert_eq!(text, expected)
+    }
 }
