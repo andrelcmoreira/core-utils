@@ -194,6 +194,7 @@ fn show_usage() {
         "Usage: cat [OPTION]... [FILE]...\n\
          Concatenate FILE(S) to the standard output.\n\n\
          If FILE is not specified or be - , read the standard input.\n\n\
+         \t-A, --show-all\t\tequivalent to -vET\n\
          \t-E, --show-ends\t\tshow $ at the end of each line\n\
          \t-n, --number\t\tnumber all output lines\n\
          \t-T, --show-tabs\t\tshow the tab chars as ^I\n\
@@ -217,6 +218,11 @@ fn parse_cli_args(args: Vec<String>) -> Result<CatOptions, Error> {
 
     for arg in &args[1..] {
         match arg.as_str() {
+            "-A" => {
+                opts.add_flag(FlagParam::ShowNonPrinting);
+                opts.add_flag(FlagParam::ShowEnds);
+                opts.add_flag(FlagParam::ShowTabs)
+            },
             "-E" => opts.add_flag(FlagParam::ShowEnds),
             "-T" | "--show-tabs" => opts.add_flag(FlagParam::ShowTabs),
             "--help" => opts.add_flag(FlagParam::Help),
