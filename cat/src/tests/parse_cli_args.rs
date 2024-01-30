@@ -136,6 +136,20 @@ mod tests {
     }
 
     #[test]
+    fn parse_with_hyphen_e() {
+        let args = vec!["cat".to_string(),
+                        "-e".to_string(),
+                        "foo".to_string()];
+        let ret = parse_cli_args(args.clone()).unwrap();
+
+        assert_eq!(ret.inputs.contains(&InputParam::File("foo".to_string())), true);
+        assert_eq!(ret.flags.contains(&FlagParam::ShowNonPrinting), true);
+        assert_eq!(ret.flags.contains(&FlagParam::ShowEnds), true);
+        assert_eq!(ret.inputs.len(), 1);
+        assert_eq!(ret.flags.len(), 2)
+    }
+
+    #[test]
     fn parse_with_invalid_opt() {
         let args = vec!["cat".to_string(), "-Y".to_string(), "foo".to_string()];
         let expected_msg = "cat: invalid option -- \"-Y\"\n\
