@@ -8,6 +8,7 @@ mod tests;
 #[derive(Debug, PartialEq)]
 enum FlagParam {
     Help,
+    NumberNonBlank,
     ShowEnds,
     ShowLineNumber,
     ShowNonPrinting,
@@ -36,7 +37,7 @@ const LF_CHAR: u8 = 0xa;
 const CR_CHAR: u8 = 0xd;
 
 trait FileContent {
-    fn add_line_number(&mut self);
+    fn add_line_number(&mut self, skip_blank: bool);
     fn add_cr(&mut self);
     fn add_end_char(&mut self);
     fn add_tabs(&mut self);
@@ -44,7 +45,7 @@ trait FileContent {
 }
 
 impl FileContent for String {
-    fn add_line_number(&mut self) {
+    fn add_line_number(&mut self, skip_blank: bool) {
         let mut tmp = String::new();
         let mut must_add_line_no = true;
         let mut count = 1;
@@ -146,8 +147,12 @@ impl Cat {
             buffer.add_cr()
         }
 
-        if self.opts.has_flag(FlagParam::ShowLineNumber) {
-            buffer.add_line_number()
+        if self.opts.has_flag(FlagParam::NumberNonBlank) {
+            buffer.add_line_number(true)
+        } else {
+            if self.opts.has_flag(FlagParam::ShowLineNumber) {
+                buffer.add_line_number(false)
+            }
         }
 
         Ok(buffer)
@@ -195,6 +200,7 @@ fn show_usage() {
          Concatenate FILE(S) to the standard output.\n\n\
          If FILE is not specified or be - , read the standard input.\n\n\
          \t-A, --show-all\t\tequivalent to -vET\n\
+         \t-b, --number-nonblank\tnumber non blank output lines, overlaps -n\n\
          \t-e\t\t\tequivalent to -vE\n\
          \t-E, --show-ends\t\tshow $ at the end of each line\n\
          \t-n, --number\t\tnumber all output lines\n\
@@ -219,6 +225,15 @@ fn parse_cli_args(args: Vec<String>) -> Result<CatOptions, Error> {
 
     for arg in &args[1..] {
         match arg.as_str() {
+            "-b" | "--number-nonblank" =>
+                opts.add_flag(FlagParam::NumberNonBlank),
+            "-e" => {
+                opts.add_flag(FlagParam::ShowNonPrinting);
+                opts.add_flag(FlagParam::ShowEnds)
+            },
+            "-n" | "--number" => opts.add_flag(FlagParam::ShowLineNumber),
+            "-v" | "--show-nonprinting" =>
+                opts.add_flag(FlagParam::ShowNonPrinting),
             "-A" => {
                 opts.add_flag(FlagParam::ShowNonPrinting);
                 opts.add_flag(FlagParam::ShowEnds);
@@ -227,13 +242,6 @@ fn parse_cli_args(args: Vec<String>) -> Result<CatOptions, Error> {
             "-E" => opts.add_flag(FlagParam::ShowEnds),
             "-T" | "--show-tabs" => opts.add_flag(FlagParam::ShowTabs),
             "--help" => opts.add_flag(FlagParam::Help),
-            "-e" => {
-                opts.add_flag(FlagParam::ShowNonPrinting);
-                opts.add_flag(FlagParam::ShowEnds)
-            },
-            "-n" | "--number" => opts.add_flag(FlagParam::ShowLineNumber),
-            "-v" | "--show-nonprinting" =>
-                opts.add_flag(FlagParam::ShowNonPrinting),
             "--version" => opts.add_flag(FlagParam::ShowVersion),
             "-" => opts.add_input(InputParam::Stdin),
             _ => {

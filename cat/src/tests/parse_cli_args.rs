@@ -150,6 +150,32 @@ mod tests {
     }
 
     #[test]
+    fn parse_with_number_non_blank_short() {
+        let args = vec!["cat".to_string(),
+                        "-b".to_string(),
+                        "foo".to_string()];
+        let ret = parse_cli_args(args.clone()).unwrap();
+
+        assert_eq!(ret.inputs.contains(&InputParam::File("foo".to_string())), true);
+        assert_eq!(ret.flags.contains(&FlagParam::NumberNonBlank), true);
+        assert_eq!(ret.inputs.len(), 1);
+        assert_eq!(ret.flags.len(), 1)
+    }
+
+    #[test]
+    fn parse_with_number_non_blank_long() {
+        let args = vec!["cat".to_string(),
+                        "--number-nonblank".to_string(),
+                        "foo".to_string()];
+        let ret = parse_cli_args(args.clone()).unwrap();
+
+        assert_eq!(ret.inputs.contains(&InputParam::File("foo".to_string())), true);
+        assert_eq!(ret.flags.contains(&FlagParam::NumberNonBlank), true);
+        assert_eq!(ret.inputs.len(), 1);
+        assert_eq!(ret.flags.len(), 1)
+    }
+
+    #[test]
     fn parse_with_invalid_opt() {
         let args = vec!["cat".to_string(), "-Y".to_string(), "foo".to_string()];
         let expected_msg = "cat: invalid option -- \"-Y\"\n\
