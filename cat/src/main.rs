@@ -204,6 +204,7 @@ fn show_usage() {
          \t-e\t\t\tequivalent to -vE\n\
          \t-E, --show-ends\t\tshow $ at the end of each line\n\
          \t-n, --number\t\tnumber all output lines\n\
+         \t-t\t\t\tequivalent to -vT\n\
          \t-T, --show-tabs\t\tshow the tab chars as ^I\n\
          \t-u\t\t\t(ignored)\n\
          \t-v, --show-nonprinting\tuse the notation ^ and M-, except for LFD and TAB\n\
@@ -233,6 +234,10 @@ fn parse_cli_args(args: Vec<String>) -> Result<CatOptions, Error> {
                 opts.add_flag(FlagParam::ShowEnds)
             },
             "-n" | "--number" => opts.add_flag(FlagParam::ShowLineNumber),
+            "-t" => {
+                opts.add_flag(FlagParam::ShowNonPrinting);
+                opts.add_flag(FlagParam::ShowTabs)
+            },
             "-u" => {},
             "-v" | "--show-nonprinting" =>
                 opts.add_flag(FlagParam::ShowNonPrinting),

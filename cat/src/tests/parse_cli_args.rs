@@ -136,7 +136,7 @@ mod tests {
     }
 
     #[test]
-    fn parse_with_hyphen_e() {
+    fn parse_with_hyphen_e_opt() {
         let args = vec!["cat".to_string(),
                         "-e".to_string(),
                         "foo".to_string()];
@@ -176,7 +176,7 @@ mod tests {
     }
 
     #[test]
-    fn parse_with_hyphen_u() {
+    fn parse_with_hyphen_u_opt() {
         let args = vec!["cat".to_string(),
                         "-u".to_string(),
                         "foo".to_string()];
@@ -185,6 +185,20 @@ mod tests {
         assert_eq!(ret.inputs.contains(&InputParam::File("foo".to_string())), true);
         assert_eq!(ret.inputs.len(), 1);
         assert_eq!(ret.flags.len(), 0)
+    }
+
+    #[test]
+    fn parse_with_hyphen_t_opt() {
+        let args = vec!["cat".to_string(),
+                        "-t".to_string(),
+                        "foo".to_string()];
+        let ret = parse_cli_args(args.clone()).unwrap();
+
+        assert_eq!(ret.inputs.contains(&InputParam::File("foo".to_string())), true);
+        assert_eq!(ret.flags.contains(&FlagParam::ShowTabs), true);
+        assert_eq!(ret.flags.contains(&FlagParam::ShowNonPrinting), true);
+        assert_eq!(ret.inputs.len(), 1);
+        assert_eq!(ret.flags.len(), 2)
     }
 
     #[test]
