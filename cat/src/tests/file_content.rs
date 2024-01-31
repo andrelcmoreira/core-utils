@@ -7,7 +7,7 @@ mod tests {
         let mut text = "hello\nworld\nit's me\nagain\n".to_string();
         let expected = "1\thello\n2\tworld\n3\tit's me\n4\tagain\n".to_string();
 
-        text.add_line_number();
+        text.add_line_number(false);
 
         assert_eq!(text, expected)
     }
@@ -17,7 +17,7 @@ mod tests {
         let mut text = "hello\n".to_string();
         let expected = "1\thello\n".to_string();
 
-        text.add_line_number();
+        text.add_line_number(false);
 
         assert_eq!(text, expected)
     }
@@ -27,7 +27,7 @@ mod tests {
         let mut text = "hello".to_string();
         let expected = "1\thello".to_string();
 
-        text.add_line_number();
+        text.add_line_number(false);
 
         assert_eq!(text, expected)
     }
@@ -37,7 +37,7 @@ mod tests {
         let mut text = "".to_string();
         let expected = "".to_string();
 
-        text.add_line_number();
+        text.add_line_number(false);
 
         assert_eq!(text, expected)
     }

@@ -198,13 +198,14 @@ fn show_usage() {
     let usage =
         "Usage: cat [OPTION]... [FILE]...\n\
          Concatenate FILE(S) to the standard output.\n\n\
-         If FILE is not specified or be - , read the standard input.\n\n\
+         If FILE is not specified or be -, read the standard input.\n\n\
          \t-A, --show-all\t\tequivalent to -vET\n\
          \t-b, --number-nonblank\tnumber non blank output lines, overlaps -n\n\
          \t-e\t\t\tequivalent to -vE\n\
          \t-E, --show-ends\t\tshow $ at the end of each line\n\
          \t-n, --number\t\tnumber all output lines\n\
          \t-T, --show-tabs\t\tshow the tab chars as ^I\n\
+         \t-u\t\t\t(ignored)\n\
          \t-v, --show-nonprinting\tuse the notation ^ and M-, except for LFD and TAB\n\
          \t--help\t\t\tdisplay this help and exit\n\
          \t--version\t\toutput version information and exit\n\n\
@@ -232,6 +233,7 @@ fn parse_cli_args(args: Vec<String>) -> Result<CatOptions, Error> {
                 opts.add_flag(FlagParam::ShowEnds)
             },
             "-n" | "--number" => opts.add_flag(FlagParam::ShowLineNumber),
+            "-u" => {},
             "-v" | "--show-nonprinting" =>
                 opts.add_flag(FlagParam::ShowNonPrinting),
             "-A" => {
