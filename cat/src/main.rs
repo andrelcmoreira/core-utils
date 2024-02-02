@@ -47,21 +47,22 @@ trait FileContent {
 impl FileContent for String {
     fn add_line_number(&mut self, skip_blank: bool) {
         let mut tmp = String::new();
-        let mut must_add_line_no = true;
+        let mut line_buffer = String::new();
         let mut count = 1;
 
         for byte in self.bytes() {
-            if must_add_line_no {
-                tmp.push_str(format!("{count}\t").as_str());
-                must_add_line_no = false
-            }
+            line_buffer.push(byte as char);
 
             if byte == LF_CHAR {
-                must_add_line_no = true;
-                count += 1
-            }
+                if line_buffer.len() == 1 && skip_blank {
+                    tmp.push_str("\n");
+                } else {
+                    tmp.push_str(format!("{count}\t{line_buffer}").as_str());
+                    count += 1
+                }
 
-            tmp.push(byte as char);
+                line_buffer.clear();
+            }
         }
 
         if ! tmp.is_empty() {
