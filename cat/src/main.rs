@@ -231,7 +231,7 @@ fn show_usage() {
          Examples:\n\
          \tcat f - g\tEmits the content of f, after the standard input, and\n\
          \t\t\tthen the content of g at the end.\n\
-         \tcat\t\tCopy the standart input to the standard output.";
+         \tcat\t\tCopy the standard input to the standard output.";
 
     println!("{usage}")
 }
