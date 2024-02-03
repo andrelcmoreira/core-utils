@@ -13,7 +13,8 @@ enum FlagParam {
     ShowLineNumber,
     ShowNonPrinting,
     ShowTabs,
-    ShowVersion
+    ShowVersion,
+    SqueezeBlank
 }
 
 #[derive(Debug, PartialEq)]
@@ -42,6 +43,7 @@ trait FileContent {
     fn add_end_char(&mut self);
     fn add_tabs(&mut self);
     fn replace_byte(&mut self, from: u8, to: &str);
+    fn squeeze_blank_lines(&mut self);
 }
 
 impl FileContent for String {
@@ -105,6 +107,10 @@ impl FileContent for String {
             self.push_str(tmp.as_str())
         }
     }
+
+    fn squeeze_blank_lines(&mut self) {
+        // TODO
+    }
 }
 
 impl CatOptions {
@@ -141,6 +147,10 @@ impl Cat {
 
         // FIXME: for special files (/dev like) we stay here forever
         file.read_to_string(&mut buffer)?;
+
+        if self.opts.has_flag(FlagParam::SqueezeBlank) {
+            buffer.squeeze_blank_lines()
+        }
 
         if self.opts.has_flag(FlagParam::ShowEnds) {
             buffer.add_end_char()
@@ -211,6 +221,7 @@ fn show_usage() {
          \t-e\t\t\tequivalent to -vE\n\
          \t-E, --show-ends\t\tshow $ at the end of each line\n\
          \t-n, --number\t\tnumber all output lines\n\
+         \t-s, --squeeze-blank\tsuppress repeated blank lines\n\
          \t-t\t\t\tequivalent to -vT\n\
          \t-T, --show-tabs\t\tshow the tab chars as ^I\n\
          \t-u\t\t\t(ignored)\n\
@@ -241,6 +252,7 @@ fn parse_cli_args(args: Vec<String>) -> Result<CatOptions, Error> {
                 opts.add_flag(FlagParam::ShowEnds)
             },
             "-n" | "--number" => opts.add_flag(FlagParam::ShowLineNumber),
+            "-s" | "--squeeze-blank" => opts.add_flag(FlagParam::SqueezeBlank),
             "-t" => {
                 opts.add_flag(FlagParam::ShowNonPrinting);
                 opts.add_flag(FlagParam::ShowTabs)

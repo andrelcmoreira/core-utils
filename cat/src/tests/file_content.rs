@@ -311,4 +311,24 @@ mod tests {
 
         assert_eq!(text, expected)
     }
+
+    #[test]
+    fn squeeze_multi_line_str() {
+        // TODO
+    }
+
+    #[test]
+    fn squeeze_single_line_str() {
+        // TODO
+    }
+
+    #[test]
+    fn squeeze_multi_line_str_with_no_blank_lines() {
+        // TODO
+    }
+
+    #[test]
+    fn squeeze_empty_str() {
+        // TODO
+    }
 }
