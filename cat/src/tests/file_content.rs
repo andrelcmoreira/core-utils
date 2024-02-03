@@ -4,8 +4,36 @@ mod tests {
 
     #[test]
     fn add_line_number_to_multi_line_str() {
-        let mut text = "hello\nworld\nit's me\nagain\n".to_string();
-        let expected = "1\thello\n2\tworld\n3\tit's me\n4\tagain\n".to_string();
+        let mut text = "\
+            hello\n\
+            world\n\
+            it's me\n\
+            again\n".to_string();
+        let expected = "\
+            1\thello\n\
+            2\tworld\n\
+            3\tit's me\n\
+            4\tagain\n".to_string();
+
+        text.add_line_number(false);
+
+        assert_eq!(text, expected)
+    }
+
+    #[test]
+    fn add_line_number_to_multi_line_str_with_blank_lines() {
+        let mut text = "\
+            hello\n\
+            world\n\
+            \n\
+            it's me\n\
+            again\n".to_string();
+        let expected = "\
+            1\thello\n\
+            2\tworld\n\
+            3\t\n\
+            4\tit's me\n\
+            5\tagain\n".to_string();
 
         text.add_line_number(false);
 
@@ -43,9 +71,67 @@ mod tests {
     }
 
     #[test]
+    fn add_line_number_to_multi_line_str_with_skip_blank() {
+        let mut text = "\
+            hello\n\n\
+            world\n\
+            today\n\
+            is a\n\n\
+            good day\n".to_string();
+        let expected = "\
+            1\thello\n\n\
+            2\tworld\n\
+            3\ttoday\n\
+            4\tis a\n\n\
+            5\tgood day\n".to_string();
+
+        text.add_line_number(true);
+
+        assert_eq!(text, expected)
+    }
+
+    #[test]
+    fn add_line_number_to_single_line_str_with_skip_blank() {
+        let mut text = "hello\n".to_string();
+        let expected = "1\thello\n".to_string();
+
+        text.add_line_number(true);
+
+        assert_eq!(text, expected)
+    }
+
+    #[test]
+    fn add_line_number_to_no_lf_str_with_skip_blank() {
+        let mut text = "hello".to_string();
+        let expected = "1\thello".to_string();
+
+        text.add_line_number(true);
+
+        assert_eq!(text, expected)
+    }
+
+    #[test]
+    fn add_line_number_to_empty_string_with_skip_blank() {
+        let mut text = "".to_string();
+        let expected = "".to_string();
+
+        text.add_line_number(true);
+
+        assert_eq!(text, expected)
+    }
+
+    #[test]
     fn add_end_to_multi_line_str() {
-        let mut text = "hello\nworld\nit's me\nagain\n".to_string();
-        let expected = "hello$\nworld$\nit's me$\nagain$\n".to_string();
+        let mut text = "\
+            hello\n\
+            world\n\
+            it's me\n\
+            again\n".to_string();
+        let expected = "\
+            hello$\n\
+            world$\n\
+            it's me$\n\
+            again$\n".to_string();
 
         text.add_end_char();
 
@@ -84,8 +170,16 @@ mod tests {
 
     #[test]
     fn add_cr_to_multi_line_str() {
-        let mut text = "hello\r\nworld\r\nit's me\r\nagain\r\n".to_string();
-        let expected = "hello^M\nworld^M\nit's me^M\nagain^M\n".to_string();
+        let mut text = "\
+            hello\r\n\
+            world\r\n\
+            it's me\r\n\
+            again\r\n".to_string();
+        let expected = "\
+            hello^M\n\
+            world^M\n\
+            it's me^M\n\
+            again^M\n".to_string();
 
         text.add_cr();
 
@@ -94,8 +188,16 @@ mod tests {
 
     #[test]
     fn add_cr_to_str_without_cr() {
-        let mut text = "hello\nworld\nit's me\nagain\n".to_string();
-        let expected = "hello\nworld\nit's me\nagain\n".to_string();
+        let mut text = "\
+            hello\n\
+            world\n\
+            it's me\n\
+            again\n".to_string();
+        let expected = "\
+            hello\n\
+            world\n\
+            it's me\n\
+            again\n".to_string();
 
         text.add_cr();
 
@@ -134,8 +236,16 @@ mod tests {
 
     #[test]
     fn add_tab_char_to_str() {
-        let mut text = "hello\tworld\tit's me\tagain\n".to_string();
-        let expected = "hello^Iworld^Iit's me^Iagain\n".to_string();
+        let mut text = "\
+            hello\t\
+            world\t\
+            it's me\t\
+            again\n".to_string();
+        let expected = "\
+            hello^I\
+            world^I\
+            it's me^I\
+            again\n".to_string();
 
         text.add_tabs();
 

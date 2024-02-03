@@ -55,7 +55,7 @@ impl FileContent for String {
 
             if byte == LF_CHAR {
                 if line_buffer.len() == 1 && skip_blank {
-                    tmp.push_str("\n");
+                    tmp.push_str("\n")
                 } else {
                     tmp.push_str(format!("{count}\t{line_buffer}").as_str());
                     count += 1
@@ -68,6 +68,12 @@ impl FileContent for String {
         if ! tmp.is_empty() {
             self.clear();
             self.push_str(tmp.as_str())
+        } else {
+            // no LF terminated strings
+            if ! line_buffer.is_empty() {
+                self.clear();
+                self.push_str(format!("{count}\t{line_buffer}").as_str())
+            }
         }
     }
 
