@@ -109,7 +109,36 @@ impl FileContent for String {
     }
 
     fn squeeze_blank_lines(&mut self) {
-        // TODO
+        let mut tmp = String::new();
+        let mut line = String::new();
+        let mut prior_blank_line = false;
+
+        for byte in self.bytes() {
+            if byte != LF_CHAR {
+                line.push(byte as char);
+                continue;
+            }
+
+            if line.len() != 0 {
+                line.push(byte as char);
+                tmp.push_str(line.as_str());
+                line.clear();
+
+                if prior_blank_line {
+                    prior_blank_line = false;
+                }
+            } else if ! prior_blank_line {
+                prior_blank_line = true;
+                line.push(byte as char);
+                tmp.push_str(line.as_str());
+                line.clear();
+            }
+        }
+
+        if ! tmp.is_empty() {
+            self.clear();
+            self.push_str(tmp.as_str())
+        }
     }
 }
 
