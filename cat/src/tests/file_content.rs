@@ -331,6 +331,24 @@ mod tests {
     }
 
     #[test]
+    fn squeeze_multi_line_str_with_blank_lines_at_end() {
+        let mut text = "\
+            hello\n\
+            beautiful\n\n\n\n\
+            world\n\n\n\
+            !!!\n\n\n\n\n".to_string();
+        let expected = "\
+            hello\n\
+            beautiful\n\n\
+            world\n\n\
+            !!!\n\n";
+
+        text.squeeze_blank_lines();
+
+        assert_eq!(text, expected)
+    }
+
+    #[test]
     fn squeeze_single_line_str() {
         let mut text = "hello, world!!!".to_string();
         let expected = "hello, world!!!";

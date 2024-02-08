@@ -116,22 +116,22 @@ impl FileContent for String {
         for byte in self.bytes() {
             if byte != LF_CHAR {
                 line.push(byte as char);
-                continue;
+                continue
             }
 
-            if line.len() != 0 {
+            if ! line.is_empty() {
                 line.push(byte as char);
                 tmp.push_str(line.as_str());
                 line.clear();
 
                 if prior_blank_line {
-                    prior_blank_line = false;
+                    prior_blank_line = false
                 }
             } else if ! prior_blank_line {
-                prior_blank_line = true;
                 line.push(byte as char);
                 tmp.push_str(line.as_str());
                 line.clear();
+                prior_blank_line = true
             }
         }
 
