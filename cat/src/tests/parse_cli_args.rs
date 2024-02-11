@@ -69,9 +69,22 @@ mod tests {
     }
 
     #[test]
-    fn parse_with_show_line_number_opt() {
+    fn parse_with_show_line_number_short_opt() {
         let args = vec!["cat".to_string(),
                         "-n".to_string(),
+                        "foo".to_string()];
+        let ret = parse_cli_args(args.clone()).unwrap();
+
+        assert_eq!(ret.inputs.contains(&InputParam::File("foo".to_string())), true);
+        assert_eq!(ret.flags.contains(&FlagParam::ShowLineNumber), true);
+        assert_eq!(ret.inputs.len(), 1);
+        assert_eq!(ret.flags.len(), 1)
+    }
+
+    #[test]
+    fn parse_with_show_line_number_long_opt() {
+        let args = vec!["cat".to_string(),
+                        "--number".to_string(),
                         "foo".to_string()];
         let ret = parse_cli_args(args.clone()).unwrap();
 
@@ -95,7 +108,7 @@ mod tests {
     }
 
     #[test]
-    fn parse_with_show_non_printing_opt() {
+    fn parse_with_show_non_printing_short_opt() {
         let args = vec!["cat".to_string(),
                         "-v".to_string(),
                         "foo".to_string()];
@@ -108,9 +121,35 @@ mod tests {
     }
 
     #[test]
-    fn parse_with_show_tabs_opt() {
+    fn parse_with_show_non_printing_long_opt() {
+        let args = vec!["cat".to_string(),
+                        "--show-nonprinting".to_string(),
+                        "foo".to_string()];
+        let ret = parse_cli_args(args.clone()).unwrap();
+
+        assert_eq!(ret.inputs.contains(&InputParam::File("foo".to_string())), true);
+        assert_eq!(ret.flags.contains(&FlagParam::ShowNonPrinting), true);
+        assert_eq!(ret.inputs.len(), 1);
+        assert_eq!(ret.flags.len(), 1)
+    }
+
+    #[test]
+    fn parse_with_show_tabs_short_opt() {
         let args = vec!["cat".to_string(),
                         "-v".to_string(),
+                        "foo".to_string()];
+        let ret = parse_cli_args(args.clone()).unwrap();
+
+        assert_eq!(ret.inputs.contains(&InputParam::File("foo".to_string())), true);
+        assert_eq!(ret.flags.contains(&FlagParam::ShowNonPrinting), true);
+        assert_eq!(ret.inputs.len(), 1);
+        assert_eq!(ret.flags.len(), 1)
+    }
+
+    #[test]
+    fn parse_with_show_tabs_long_opt() {
+        let args = vec!["cat".to_string(),
+                        "--show-nonprinting".to_string(),
                         "foo".to_string()];
         let ret = parse_cli_args(args.clone()).unwrap();
 
@@ -150,7 +189,7 @@ mod tests {
     }
 
     #[test]
-    fn parse_with_number_non_blank_short() {
+    fn parse_with_number_non_blank_short_opt() {
         let args = vec!["cat".to_string(),
                         "-b".to_string(),
                         "foo".to_string()];
@@ -163,7 +202,7 @@ mod tests {
     }
 
     #[test]
-    fn parse_with_number_non_blank_long() {
+    fn parse_with_number_non_blank_long_opt() {
         let args = vec!["cat".to_string(),
                         "--number-nonblank".to_string(),
                         "foo".to_string()];
@@ -210,5 +249,31 @@ mod tests {
 
         assert_eq!(ret.kind(), ErrorKind::InvalidInput);
         assert_eq!(ret.to_string(), expected_msg.to_string());
+    }
+
+    #[test]
+    fn parse_with_squeeze_blank_short_opt() {
+        let args = vec!["cat".to_string(),
+                        "-s".to_string(),
+                        "foo".to_string()];
+        let ret = parse_cli_args(args.clone()).unwrap();
+
+        assert_eq!(ret.inputs.contains(&InputParam::File("foo".to_string())), true);
+        assert_eq!(ret.flags.contains(&FlagParam::SqueezeBlank), true);
+        assert_eq!(ret.inputs.len(), 1);
+        assert_eq!(ret.flags.len(), 1)
+    }
+
+    #[test]
+    fn parse_with_squeeze_blank_long_opt() {
+        let args = vec!["cat".to_string(),
+                        "--squeeze-blank".to_string(),
+                        "foo".to_string()];
+        let ret = parse_cli_args(args.clone()).unwrap();
+
+        assert_eq!(ret.inputs.contains(&InputParam::File("foo".to_string())), true);
+        assert_eq!(ret.flags.contains(&FlagParam::SqueezeBlank), true);
+        assert_eq!(ret.inputs.len(), 1);
+        assert_eq!(ret.flags.len(), 1)
     }
 }
