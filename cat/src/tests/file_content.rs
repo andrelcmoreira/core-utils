@@ -91,6 +91,26 @@ mod tests {
     }
 
     #[test]
+    fn add_line_number_to_multi_line_str_with_skip_blank_and_no_blank_lines() {
+        let mut text = "\
+            hello\n\
+            world\n\
+            today\n\
+            is a\n\n\
+            good day\n".to_string();
+        let expected = "\
+            1\thello\n\
+            2\tworld\n\
+            3\ttoday\n\
+            4\tis a\n\n\
+            5\tgood day\n".to_string();
+
+        text.add_line_number(true);
+
+        assert_eq!(text, expected)
+    }
+
+    #[test]
     fn add_line_number_to_single_line_str_with_skip_blank() {
         let mut text = "hello\n".to_string();
         let expected = "1\thello\n".to_string();
@@ -139,6 +159,27 @@ mod tests {
     }
 
     #[test]
+    fn add_end_to_multi_line_str_with_blank_lines() {
+        let mut text = "\
+            hello\n\n\
+            world\n\n\n\
+            it's me\n\
+            again\n".to_string();
+        let expected = "\
+            hello$\n\
+            $\n\
+            world$\n\
+            $\n\
+            $\n\
+            it's me$\n\
+            again$\n".to_string();
+
+        text.add_end_char();
+
+        assert_eq!(text, expected)
+    }
+
+    #[test]
     fn add_end_to_single_line_str() {
         let mut text = "hello\n".to_string();
         let expected = "hello$\n".to_string();
@@ -178,6 +219,25 @@ mod tests {
         let expected = "\
             hello^M\n\
             world^M\n\
+            it's me^M\n\
+            again^M\n".to_string();
+
+        text.add_cr();
+
+        assert_eq!(text, expected)
+    }
+
+    #[test]
+    fn add_cr_to_multi_line_str_with_blank_lines() {
+        let mut text = "\
+            hello\r\n\
+            world\r\n\r\n\
+            it's me\r\n\
+            again\r\n".to_string();
+        let expected = "\
+            hello^M\n\
+            world^M\n\
+            ^M\n\
             it's me^M\n\
             again^M\n".to_string();
 
