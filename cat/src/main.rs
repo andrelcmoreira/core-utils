@@ -7,9 +7,9 @@ mod tests;
 
 #[derive(Debug, PartialEq)]
 enum FlagParam {
-    Help,
     NumberNonBlank,
     ShowEnds,
+    ShowHelp,
     ShowLineNumber,
     ShowNonPrinting,
     ShowTabs,
@@ -95,10 +95,10 @@ impl FileContent for String {
         let mut tmp = String::new();
 
         for byte in self.bytes() {
-            if byte == from {
-                tmp.push_str(to)
-            } else {
+            if byte != from {
                 tmp.push(byte as char)
+            } else {
+                tmp.push_str(to)
             }
         }
 
@@ -216,7 +216,7 @@ impl Cat {
     }
 
     fn run(&self) {
-        if self.opts.has_flag(FlagParam::Help) {
+        if self.opts.has_flag(FlagParam::ShowHelp) {
             show_usage();
             return
         }
@@ -296,7 +296,7 @@ fn parse_cli_args(args: Vec<String>) -> Result<CatOptions, Error> {
             },
             "-E" => opts.add_flag(FlagParam::ShowEnds),
             "-T" | "--show-tabs" => opts.add_flag(FlagParam::ShowTabs),
-            "--help" => opts.add_flag(FlagParam::Help),
+            "--help" => opts.add_flag(FlagParam::ShowHelp),
             "--version" => opts.add_flag(FlagParam::ShowVersion),
             "-" => opts.add_input(InputParam::Stdin),
             _ => {

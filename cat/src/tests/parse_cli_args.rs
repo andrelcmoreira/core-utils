@@ -63,7 +63,7 @@ mod tests {
         let args = vec!["cat".to_string(), "--help".to_string()];
         let ret = parse_cli_args(args.clone()).unwrap();
 
-        assert_eq!(ret.flags.contains(&FlagParam::Help), true);
+        assert_eq!(ret.flags.contains(&FlagParam::ShowHelp), true);
         assert_eq!(ret.inputs.is_empty(), true);
         assert_eq!(ret.flags.len(), 1)
     }

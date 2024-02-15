@@ -64,7 +64,7 @@ mod tests {
         assert_eq!(opts.has_flag(FlagParam::ShowLineNumber), false);
         assert_eq!(opts.has_flag(FlagParam::SqueezeBlank), false);
         assert_eq!(opts.has_flag(FlagParam::NumberNonBlank), false);
-        assert_eq!(opts.has_flag(FlagParam::Help), false);
+        assert_eq!(opts.has_flag(FlagParam::ShowHelp), false);
     }
 
     #[test]
@@ -79,7 +79,7 @@ mod tests {
         assert_eq!(opts.has_flag(FlagParam::ShowLineNumber), false);
         assert_eq!(opts.has_flag(FlagParam::SqueezeBlank), true);
         assert_eq!(opts.has_flag(FlagParam::NumberNonBlank), false);
-        assert_eq!(opts.has_flag(FlagParam::Help), false);
+        assert_eq!(opts.has_flag(FlagParam::ShowHelp), false);
     }
 
     #[test]
@@ -96,6 +96,6 @@ mod tests {
         assert_eq!(opts.has_flag(FlagParam::ShowLineNumber), true);
         assert_eq!(opts.has_flag(FlagParam::SqueezeBlank), true);
         assert_eq!(opts.has_flag(FlagParam::NumberNonBlank), false);
-        assert_eq!(opts.has_flag(FlagParam::Help), false);
+        assert_eq!(opts.has_flag(FlagParam::ShowHelp), false);
     }
 }
