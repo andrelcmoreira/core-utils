@@ -1,6 +1,6 @@
 [workspace]
 resolver = "1"
 members = [
-  "cat",
-  "ls"
+  "src/cat",
+  "src/ls"
 ]
