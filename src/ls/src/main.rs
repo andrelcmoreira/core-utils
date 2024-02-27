@@ -11,15 +11,10 @@ enum FlagParam {
     ShowVersion
 }
 
-#[derive(Debug, PartialEq)]
-enum InputParam {
-    File(String),
-    Directory(String)
-}
-
 struct LsOptions {
     flags: Vec<FlagParam>,
-    inputs: Vec<InputParam>
+    files: Vec<String>,
+    directories: Vec<String>
 }
 
 struct Ls {
@@ -30,7 +25,8 @@ impl LsOptions {
     fn new() -> Self {
         Self {
             flags: Vec::new(),
-            inputs: Vec::new()
+            files: Vec::new(),
+            directories: Vec::new()
         }
     }
 
@@ -42,8 +38,12 @@ impl LsOptions {
         self.flags.push(f)
     }
 
-    fn add_input(&mut self, i: InputParam) {
-        self.inputs.push(i)
+    fn add_file(&mut self, f: String) {
+        self.files.push(f)
+    }
+
+    fn add_directory(&mut self, d: String) {
+        self.directories.push(d)
     }
 }
 
@@ -54,50 +54,57 @@ impl Ls {
         }
     }
 
-    fn run(&self) {
+    fn run(&mut self) {
         if self.opts.has_flag(FlagParam::ShowVersion) {
             show_version();
             return
         }
 
-        // TODO: we must to print the files first
-        for entry in &self.opts.inputs {
-            match entry {
-                InputParam::File(f) => self.ls_file(f),
-                InputParam::Directory(d) => self.ls_dir(d),
-            }
+        if ! self.opts.files.is_empty() {
+            self.opts.files.sort();
+            self.ls_files()
+        }
+
+        if ! self.opts.directories.is_empty() {
+            self.opts.directories.sort();
+            self.ls_dirs()
         }
     }
 
-    fn ls_file(&self, path: &str) {
-        if self.opts.flags.is_empty() {
-            println!("{path}")
+    fn ls_files(&self) {
+        for path in &self.opts.files {
+            print!("{path}\t")
         }
+
+        println!("")
     }
 
-    fn ls_dir(&self, path: &str) {
+    fn ls_dirs(&self) {
         // TODO: improve this function
-        let files = match read_dir(path) {
-            Ok(f) => f,
-            Err(e) => match e.kind() {
-                ErrorKind::PermissionDenied =>
-                    panic!("ls: couldn't access '{path}': {}", e.to_string()),
-                ErrorKind::NotFound =>
-                    panic!("ls: couldn't open the directory '{path}': {}",
-                           e.to_string()),
-                _ => panic!("ls: unknown error")
-            }
-        };
+        // FIXME: fix the showing when we have files to show as well
+        for path in &self.opts.directories {
+            let files = match read_dir(path) {
+                Ok(f) => f,
+                Err(e) => match e.kind() {
+                    ErrorKind::PermissionDenied =>
+                        panic!("ls: couldn't access '{path}': {}", e.to_string()),
+                    ErrorKind::NotFound =>
+                        panic!("ls: couldn't open the directory '{path}': {}",
+                               e.to_string()),
+                    _ => panic!("ls: unknown error")
+                }
+            };
 
-        for entry in files {
-            let name = entry
-                .unwrap()
-                .file_name()
-                .into_string()
-                .unwrap();
+            for entry in files {
+                let name = entry
+                    .unwrap()
+                    .file_name()
+                    .into_string()
+                    .unwrap();
 
-            if ! name.starts_with(".") {
-                print!("{}  ", name)
+                if ! name.starts_with(".") {
+                    print!("{}  ", name)
+                }
             }
         }
 
@@ -121,6 +128,12 @@ fn is_dir(path: &str) -> bool {
     p.is_dir()
 }
 
+fn is_file(path: &str) -> bool {
+    let f = Path::new(path);
+
+    f.is_file()
+}
+
 fn parse_cli_args(args: Vec<String>) -> Result<LsOptions, Error> {
     let mut opts = LsOptions::new();
 
@@ -136,9 +149,9 @@ fn parse_cli_args(args: Vec<String>) -> Result<LsOptions, Error> {
                     let entry = arg.clone();
 
                     if is_dir(entry.as_str()) {
-                        opts.add_input(InputParam::Directory(entry))
-                    } else {
-                        opts.add_input(InputParam::File(entry))
+                        opts.add_directory(entry)
+                    } else if is_file(entry.as_str()) {
+                        opts.add_file(entry)
                     }
                 }
             }
@@ -153,7 +166,7 @@ fn main() {
 
     match parse_cli_args(args) {
         Ok(opts) => {
-            let ls = Ls::new(opts);
+            let mut ls = Ls::new(opts);
 
             ls.run()
         },
