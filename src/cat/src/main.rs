@@ -1,5 +1,5 @@
 use std::env::args;
-use std::fs::File;
+use std::fs::{metadata, File};
 use std::io::{stdin, Error, ErrorKind, Read};
 
 #[cfg(test)]
@@ -170,11 +170,20 @@ impl Cat {
         }
     }
 
-    fn read_file(&self, filename: &String) -> Result<String, Error> {
-        let mut buffer = String::new();
-        let mut file = File::open(filename)?;
+    fn read_special_file(&self, file: &mut File) -> Result<(), Error> {
+        let mut buffer = [0; 1];
 
-        // FIXME: for special files (/dev like) we stay here forever
+        // FIXME: investigate the scenario where we don't have permission
+        // enough to read the file (e.g /dev/input/event8)
+        loop {
+            file.read_exact(&mut buffer)?;
+            print!("{}", buffer[0] as char)
+        }
+    }
+
+    fn read_regular_file(&self, file: &mut File) -> Result<String, Error> {
+        let mut buffer = String::new();
+
         file.read_to_string(&mut buffer)?;
 
         if self.opts.has_flag(FlagParam::SqueezeBlank) {
@@ -204,11 +213,32 @@ impl Cat {
         Ok(buffer)
     }
 
+    fn is_regular_file(&self, filename: &String) -> bool {
+        let file_type = metadata(filename)
+            .unwrap();
+
+        file_type.is_file()
+    }
+
+    fn read_file(&self, filename: &String) -> Result<String, Error> {
+        let mut ret = String::new();
+        let mut file = File::open(filename)?;
+
+        if self.is_regular_file(filename) {
+            ret = self.read_regular_file(&mut file)?;
+        } else {
+            self.read_special_file(&mut file)?;
+        }
+
+        Ok(ret)
+    }
+
     fn read_stdin() {
         let mut buf = String::new();
 
         loop {
-            stdin().read_line(&mut buf).unwrap();
+            stdin().read_line(&mut buf)
+                .unwrap();
 
             print!("{buf}");
             buf.clear()
