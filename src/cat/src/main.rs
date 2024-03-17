@@ -2,7 +2,7 @@ use std::env::args;
 use std::fs::File;
 use std::io::{stdin, Error, ErrorKind, Read};
 
-use utils::is_regular_file;
+use utils::filesystem::is_regular_file;
 
 #[cfg(test)]
 mod tests;
