@@ -1,6 +1,8 @@
 use std::env::args;
-use std::fs::{metadata, File};
+use std::fs::File;
 use std::io::{stdin, Error, ErrorKind, Read};
+
+use utils::is_regular_file;
 
 #[cfg(test)]
 mod tests;
@@ -213,18 +215,11 @@ impl Cat {
         Ok(buffer)
     }
 
-    fn is_regular_file(&self, filename: &String) -> bool {
-        let file_type = metadata(filename)
-            .unwrap();
-
-        file_type.is_file()
-    }
-
     fn read_file(&self, filename: &String) -> Result<String, Error> {
         let mut ret = String::new();
         let mut file = File::open(filename)?;
 
-        if self.is_regular_file(filename) {
+        if is_regular_file(filename) {
             ret = self.read_regular_file(&mut file)?;
         } else {
             self.read_special_file(&mut file)?;

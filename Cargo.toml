@@ -2,5 +2,6 @@
 resolver = "1"
 members = [
   "src/cat",
-  "src/ls"
+  "src/ls",
+  "src/utils"
 ]
