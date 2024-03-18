@@ -1,9 +1,10 @@
 use std::io::{stdin, Error, Read};
 use std::fs::File;
 
-use crate::cli_param;
-use crate::file_content::FileContent;
 use utils::filesystem::is_regular_file;
+
+use crate::cli_param;
+use crate::traits::FileContent;
 
 #[derive(Debug)]
 pub struct Options {
