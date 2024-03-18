@@ -1,4 +1,4 @@
-use crate::*;
+use cat::file_content::FileContent;
 
 #[test]
 fn add_line_number_to_multi_line_str() {

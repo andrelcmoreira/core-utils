@@ -1,4 +1,5 @@
-use crate::*;
+use cat::cat_options::CatOptions;
+use cat::types::{FlagParam, InputParam};
 
 #[test]
 fn add_single_input() {
@@ -6,8 +7,8 @@ fn add_single_input() {
 
     opts.add_input(InputParam::Stdin);
 
-    assert_eq!(opts.inputs.contains(&InputParam::Stdin), true);
-    assert_eq!(opts.inputs.len(), 1);
+    assert_eq!(opts.inputs().contains(&InputParam::Stdin), true);
+    assert_eq!(opts.inputs().len(), 1);
 }
 
 #[test]
@@ -16,8 +17,8 @@ fn add_single_flag() {
 
     opts.add_flag(FlagParam::ShowTabs);
 
-    assert_eq!(opts.flags.contains(&FlagParam::ShowTabs), true);
-    assert_eq!(opts.flags.len(), 1);
+    assert_eq!(opts.flags().contains(&FlagParam::ShowTabs), true);
+    assert_eq!(opts.flags().len(), 1);
 }
 
 #[test]
@@ -29,11 +30,11 @@ fn add_multiple_inputs() {
     opts.add_input(InputParam::File("f3".to_string()));
     opts.add_input(InputParam::File("f4".to_string()));
 
-    assert_eq!(opts.inputs.contains(&InputParam::File("f1".to_string())), true);
-    assert_eq!(opts.inputs.contains(&InputParam::File("f2".to_string())), true);
-    assert_eq!(opts.inputs.contains(&InputParam::File("f3".to_string())), true);
-    assert_eq!(opts.inputs.contains(&InputParam::File("f4".to_string())), true);
-    assert_eq!(opts.inputs.len(), 4);
+    assert_eq!(opts.inputs().contains(&InputParam::File("f1".to_string())), true);
+    assert_eq!(opts.inputs().contains(&InputParam::File("f2".to_string())), true);
+    assert_eq!(opts.inputs().contains(&InputParam::File("f3".to_string())), true);
+    assert_eq!(opts.inputs().contains(&InputParam::File("f4".to_string())), true);
+    assert_eq!(opts.inputs().len(), 4);
 }
 
 #[test]
@@ -45,11 +46,11 @@ fn add_multiple_flags() {
     opts.add_flag(FlagParam::ShowNonPrinting);
     opts.add_flag(FlagParam::ShowLineNumber);
 
-    assert_eq!(opts.flags.contains(&FlagParam::ShowTabs), true);
-    assert_eq!(opts.flags.contains(&FlagParam::ShowEnds), true);
-    assert_eq!(opts.flags.contains(&FlagParam::ShowNonPrinting), true);
-    assert_eq!(opts.flags.contains(&FlagParam::ShowLineNumber), true);
-    assert_eq!(opts.flags.len(), 4);
+    assert_eq!(opts.flags().contains(&FlagParam::ShowTabs), true);
+    assert_eq!(opts.flags().contains(&FlagParam::ShowEnds), true);
+    assert_eq!(opts.flags().contains(&FlagParam::ShowNonPrinting), true);
+    assert_eq!(opts.flags().contains(&FlagParam::ShowLineNumber), true);
+    assert_eq!(opts.flags().len(), 4);
 }
 
 #[test]

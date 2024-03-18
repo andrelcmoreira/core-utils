@@ -1,12 +1,15 @@
-use crate::*;
+use std::io::ErrorKind;
+
+use cat::cli_args::parse_cli_args;
+use cat::types::{FlagParam, InputParam};
 
 #[test]
 fn parse_with_no_args() {
     let args = vec!["cat".to_string()];
     let ret = parse_cli_args(args).unwrap();
 
-    assert_eq!(ret.inputs.is_empty(), true);
-    assert_eq!(ret.flags.is_empty(), true)
+    assert_eq!(ret.inputs().is_empty(), true);
+    assert_eq!(ret.flags().is_empty(), true)
 }
 
 #[test]
@@ -14,9 +17,9 @@ fn parse_with_hyphen_opt() {
     let args = vec!["cat".to_string(), "-".to_string()];
     let ret = parse_cli_args(args.clone()).unwrap();
 
-    assert_eq!(ret.inputs.contains(&InputParam::Stdin), true);
-    assert_eq!(ret.inputs.len(), args.len() - 1);
-    assert_eq!(ret.flags.is_empty(), true)
+    assert_eq!(ret.inputs().contains(&InputParam::Stdin), true);
+    assert_eq!(ret.inputs().len(), args.len() - 1);
+    assert_eq!(ret.flags().is_empty(), true)
 }
 
 #[test]
@@ -24,9 +27,9 @@ fn parse_with_single_input() {
     let args = vec!["cat".to_string(), "foo".to_string()];
     let ret = parse_cli_args(args.clone()).unwrap();
 
-    assert_eq!(ret.inputs.contains(&InputParam::File("foo".to_string())), true);
-    assert_eq!(ret.inputs.len(), args.len() - 1);
-    assert_eq!(ret.flags.is_empty(), true)
+    assert_eq!(ret.inputs().contains(&InputParam::File("foo".to_string())), true);
+    assert_eq!(ret.inputs().len(), args.len() - 1);
+    assert_eq!(ret.flags().is_empty(), true)
 }
 
 #[test]
@@ -38,12 +41,12 @@ fn parse_with_multiple_inputs() {
     let ret = parse_cli_args(args.clone()).unwrap();
 
     for arg in &args[1..] {
-        assert_eq!(ret.inputs.contains(&InputParam::File(arg.to_string())),
+        assert_eq!(ret.inputs().contains(&InputParam::File(arg.to_string())),
                    true);
     }
 
-    assert_eq!(ret.inputs.len(), args.len() - 1);
-    assert_eq!(ret.flags.is_empty(), true)
+    assert_eq!(ret.inputs().len(), args.len() - 1);
+    assert_eq!(ret.flags().is_empty(), true)
 }
 
 #[test]
@@ -51,9 +54,9 @@ fn parse_with_show_version_opt() {
     let args = vec!["cat".to_string(), "--version".to_string()];
     let ret = parse_cli_args(args.clone()).unwrap();
 
-    assert_eq!(ret.flags.contains(&FlagParam::ShowVersion), true);
-    assert_eq!(ret.inputs.is_empty(), true);
-    assert_eq!(ret.flags.len(), 1)
+    assert_eq!(ret.flags().contains(&FlagParam::ShowVersion), true);
+    assert_eq!(ret.inputs().is_empty(), true);
+    assert_eq!(ret.flags().len(), 1)
 }
 
 #[test]
@@ -61,9 +64,9 @@ fn parse_with_help_opt() {
     let args = vec!["cat".to_string(), "--help".to_string()];
     let ret = parse_cli_args(args.clone()).unwrap();
 
-    assert_eq!(ret.flags.contains(&FlagParam::ShowHelp), true);
-    assert_eq!(ret.inputs.is_empty(), true);
-    assert_eq!(ret.flags.len(), 1)
+    assert_eq!(ret.flags().contains(&FlagParam::ShowHelp), true);
+    assert_eq!(ret.inputs().is_empty(), true);
+    assert_eq!(ret.flags().len(), 1)
 }
 
 #[test]
@@ -73,10 +76,10 @@ fn parse_with_show_line_number_short_opt() {
                     "foo".to_string()];
     let ret = parse_cli_args(args.clone()).unwrap();
 
-    assert_eq!(ret.inputs.contains(&InputParam::File("foo".to_string())), true);
-    assert_eq!(ret.flags.contains(&FlagParam::ShowLineNumber), true);
-    assert_eq!(ret.inputs.len(), 1);
-    assert_eq!(ret.flags.len(), 1)
+    assert_eq!(ret.inputs().contains(&InputParam::File("foo".to_string())), true);
+    assert_eq!(ret.flags().contains(&FlagParam::ShowLineNumber), true);
+    assert_eq!(ret.inputs().len(), 1);
+    assert_eq!(ret.flags().len(), 1)
 }
 
 #[test]
@@ -86,10 +89,10 @@ fn parse_with_show_line_number_long_opt() {
                     "foo".to_string()];
     let ret = parse_cli_args(args.clone()).unwrap();
 
-    assert_eq!(ret.inputs.contains(&InputParam::File("foo".to_string())), true);
-    assert_eq!(ret.flags.contains(&FlagParam::ShowLineNumber), true);
-    assert_eq!(ret.inputs.len(), 1);
-    assert_eq!(ret.flags.len(), 1)
+    assert_eq!(ret.inputs().contains(&InputParam::File("foo".to_string())), true);
+    assert_eq!(ret.flags().contains(&FlagParam::ShowLineNumber), true);
+    assert_eq!(ret.inputs().len(), 1);
+    assert_eq!(ret.flags().len(), 1)
 }
 
 #[test]
@@ -99,10 +102,10 @@ fn parse_with_show_ends_opt() {
                     "foo".to_string()];
     let ret = parse_cli_args(args.clone()).unwrap();
 
-    assert_eq!(ret.inputs.contains(&InputParam::File("foo".to_string())), true);
-    assert_eq!(ret.flags.contains(&FlagParam::ShowEnds), true);
-    assert_eq!(ret.inputs.len(), 1);
-    assert_eq!(ret.flags.len(), 1)
+    assert_eq!(ret.inputs().contains(&InputParam::File("foo".to_string())), true);
+    assert_eq!(ret.flags().contains(&FlagParam::ShowEnds), true);
+    assert_eq!(ret.inputs().len(), 1);
+    assert_eq!(ret.flags().len(), 1)
 }
 
 #[test]
@@ -112,10 +115,10 @@ fn parse_with_show_non_printing_short_opt() {
                     "foo".to_string()];
     let ret = parse_cli_args(args.clone()).unwrap();
 
-    assert_eq!(ret.inputs.contains(&InputParam::File("foo".to_string())), true);
-    assert_eq!(ret.flags.contains(&FlagParam::ShowNonPrinting), true);
-    assert_eq!(ret.inputs.len(), 1);
-    assert_eq!(ret.flags.len(), 1)
+    assert_eq!(ret.inputs().contains(&InputParam::File("foo".to_string())), true);
+    assert_eq!(ret.flags().contains(&FlagParam::ShowNonPrinting), true);
+    assert_eq!(ret.inputs().len(), 1);
+    assert_eq!(ret.flags().len(), 1)
 }
 
 #[test]
@@ -125,10 +128,10 @@ fn parse_with_show_non_printing_long_opt() {
                     "foo".to_string()];
     let ret = parse_cli_args(args.clone()).unwrap();
 
-    assert_eq!(ret.inputs.contains(&InputParam::File("foo".to_string())), true);
-    assert_eq!(ret.flags.contains(&FlagParam::ShowNonPrinting), true);
-    assert_eq!(ret.inputs.len(), 1);
-    assert_eq!(ret.flags.len(), 1)
+    assert_eq!(ret.inputs().contains(&InputParam::File("foo".to_string())), true);
+    assert_eq!(ret.flags().contains(&FlagParam::ShowNonPrinting), true);
+    assert_eq!(ret.inputs().len(), 1);
+    assert_eq!(ret.flags().len(), 1)
 }
 
 #[test]
@@ -138,10 +141,10 @@ fn parse_with_show_tabs_short_opt() {
                     "foo".to_string()];
     let ret = parse_cli_args(args.clone()).unwrap();
 
-    assert_eq!(ret.inputs.contains(&InputParam::File("foo".to_string())), true);
-    assert_eq!(ret.flags.contains(&FlagParam::ShowNonPrinting), true);
-    assert_eq!(ret.inputs.len(), 1);
-    assert_eq!(ret.flags.len(), 1)
+    assert_eq!(ret.inputs().contains(&InputParam::File("foo".to_string())), true);
+    assert_eq!(ret.flags().contains(&FlagParam::ShowNonPrinting), true);
+    assert_eq!(ret.inputs().len(), 1);
+    assert_eq!(ret.flags().len(), 1)
 }
 
 #[test]
@@ -151,10 +154,10 @@ fn parse_with_show_tabs_long_opt() {
                     "foo".to_string()];
     let ret = parse_cli_args(args.clone()).unwrap();
 
-    assert_eq!(ret.inputs.contains(&InputParam::File("foo".to_string())), true);
-    assert_eq!(ret.flags.contains(&FlagParam::ShowNonPrinting), true);
-    assert_eq!(ret.inputs.len(), 1);
-    assert_eq!(ret.flags.len(), 1)
+    assert_eq!(ret.inputs().contains(&InputParam::File("foo".to_string())), true);
+    assert_eq!(ret.flags().contains(&FlagParam::ShowNonPrinting), true);
+    assert_eq!(ret.inputs().len(), 1);
+    assert_eq!(ret.flags().len(), 1)
 }
 
 #[test]
@@ -164,12 +167,12 @@ fn parse_with_show_all() {
                     "foo".to_string()];
     let ret = parse_cli_args(args.clone()).unwrap();
 
-    assert_eq!(ret.inputs.contains(&InputParam::File("foo".to_string())), true);
-    assert_eq!(ret.flags.contains(&FlagParam::ShowNonPrinting), true);
-    assert_eq!(ret.flags.contains(&FlagParam::ShowEnds), true);
-    assert_eq!(ret.flags.contains(&FlagParam::ShowTabs), true);
-    assert_eq!(ret.inputs.len(), 1);
-    assert_eq!(ret.flags.len(), 3)
+    assert_eq!(ret.inputs().contains(&InputParam::File("foo".to_string())), true);
+    assert_eq!(ret.flags().contains(&FlagParam::ShowNonPrinting), true);
+    assert_eq!(ret.flags().contains(&FlagParam::ShowEnds), true);
+    assert_eq!(ret.flags().contains(&FlagParam::ShowTabs), true);
+    assert_eq!(ret.inputs().len(), 1);
+    assert_eq!(ret.flags().len(), 3)
 }
 
 #[test]
@@ -179,11 +182,11 @@ fn parse_with_hyphen_e_opt() {
                     "foo".to_string()];
     let ret = parse_cli_args(args.clone()).unwrap();
 
-    assert_eq!(ret.inputs.contains(&InputParam::File("foo".to_string())), true);
-    assert_eq!(ret.flags.contains(&FlagParam::ShowNonPrinting), true);
-    assert_eq!(ret.flags.contains(&FlagParam::ShowEnds), true);
-    assert_eq!(ret.inputs.len(), 1);
-    assert_eq!(ret.flags.len(), 2)
+    assert_eq!(ret.inputs().contains(&InputParam::File("foo".to_string())), true);
+    assert_eq!(ret.flags().contains(&FlagParam::ShowNonPrinting), true);
+    assert_eq!(ret.flags().contains(&FlagParam::ShowEnds), true);
+    assert_eq!(ret.inputs().len(), 1);
+    assert_eq!(ret.flags().len(), 2)
 }
 
 #[test]
@@ -193,10 +196,10 @@ fn parse_with_number_non_blank_short_opt() {
                     "foo".to_string()];
     let ret = parse_cli_args(args.clone()).unwrap();
 
-    assert_eq!(ret.inputs.contains(&InputParam::File("foo".to_string())), true);
-    assert_eq!(ret.flags.contains(&FlagParam::NumberNonBlank), true);
-    assert_eq!(ret.inputs.len(), 1);
-    assert_eq!(ret.flags.len(), 1)
+    assert_eq!(ret.inputs().contains(&InputParam::File("foo".to_string())), true);
+    assert_eq!(ret.flags().contains(&FlagParam::NumberNonBlank), true);
+    assert_eq!(ret.inputs().len(), 1);
+    assert_eq!(ret.flags().len(), 1)
 }
 
 #[test]
@@ -206,10 +209,10 @@ fn parse_with_number_non_blank_long_opt() {
                     "foo".to_string()];
     let ret = parse_cli_args(args.clone()).unwrap();
 
-    assert_eq!(ret.inputs.contains(&InputParam::File("foo".to_string())), true);
-    assert_eq!(ret.flags.contains(&FlagParam::NumberNonBlank), true);
-    assert_eq!(ret.inputs.len(), 1);
-    assert_eq!(ret.flags.len(), 1)
+    assert_eq!(ret.inputs().contains(&InputParam::File("foo".to_string())), true);
+    assert_eq!(ret.flags().contains(&FlagParam::NumberNonBlank), true);
+    assert_eq!(ret.inputs().len(), 1);
+    assert_eq!(ret.flags().len(), 1)
 }
 
 #[test]
@@ -219,9 +222,9 @@ fn parse_with_hyphen_u_opt() {
                     "foo".to_string()];
     let ret = parse_cli_args(args.clone()).unwrap();
 
-    assert_eq!(ret.inputs.contains(&InputParam::File("foo".to_string())), true);
-    assert_eq!(ret.inputs.len(), 1);
-    assert_eq!(ret.flags.len(), 0)
+    assert_eq!(ret.inputs().contains(&InputParam::File("foo".to_string())), true);
+    assert_eq!(ret.inputs().len(), 1);
+    assert_eq!(ret.flags().len(), 0)
 }
 
 #[test]
@@ -231,11 +234,11 @@ fn parse_with_hyphen_t_opt() {
                     "foo".to_string()];
     let ret = parse_cli_args(args.clone()).unwrap();
 
-    assert_eq!(ret.inputs.contains(&InputParam::File("foo".to_string())), true);
-    assert_eq!(ret.flags.contains(&FlagParam::ShowTabs), true);
-    assert_eq!(ret.flags.contains(&FlagParam::ShowNonPrinting), true);
-    assert_eq!(ret.inputs.len(), 1);
-    assert_eq!(ret.flags.len(), 2)
+    assert_eq!(ret.inputs().contains(&InputParam::File("foo".to_string())), true);
+    assert_eq!(ret.flags().contains(&FlagParam::ShowTabs), true);
+    assert_eq!(ret.flags().contains(&FlagParam::ShowNonPrinting), true);
+    assert_eq!(ret.inputs().len(), 1);
+    assert_eq!(ret.flags().len(), 2)
 }
 
 #[test]
@@ -256,10 +259,10 @@ fn parse_with_squeeze_blank_short_opt() {
                     "foo".to_string()];
     let ret = parse_cli_args(args.clone()).unwrap();
 
-    assert_eq!(ret.inputs.contains(&InputParam::File("foo".to_string())), true);
-    assert_eq!(ret.flags.contains(&FlagParam::SqueezeBlank), true);
-    assert_eq!(ret.inputs.len(), 1);
-    assert_eq!(ret.flags.len(), 1)
+    assert_eq!(ret.inputs().contains(&InputParam::File("foo".to_string())), true);
+    assert_eq!(ret.flags().contains(&FlagParam::SqueezeBlank), true);
+    assert_eq!(ret.inputs().len(), 1);
+    assert_eq!(ret.flags().len(), 1)
 }
 
 #[test]
@@ -269,8 +272,8 @@ fn parse_with_squeeze_blank_long_opt() {
                     "foo".to_string()];
     let ret = parse_cli_args(args.clone()).unwrap();
 
-    assert_eq!(ret.inputs.contains(&InputParam::File("foo".to_string())), true);
-    assert_eq!(ret.flags.contains(&FlagParam::SqueezeBlank), true);
-    assert_eq!(ret.inputs.len(), 1);
-    assert_eq!(ret.flags.len(), 1)
+    assert_eq!(ret.inputs().contains(&InputParam::File("foo".to_string())), true);
+    assert_eq!(ret.flags().contains(&FlagParam::SqueezeBlank), true);
+    assert_eq!(ret.inputs().len(), 1);
+    assert_eq!(ret.flags().len(), 1)
 }
