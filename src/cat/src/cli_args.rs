@@ -1,7 +1,6 @@
 use std::io::{Error, ErrorKind};
 
-use crate::it as cat;
-use crate::cli_param;
+use crate::{it as cat, cli_param};
 
 pub fn parse(args: Vec<String>) -> Result<cat::Options, Error> {
     let mut opts = cat::Options::new();
