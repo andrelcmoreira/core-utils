@@ -1,6 +1,5 @@
-
 #[derive(Debug, PartialEq)]
-pub enum FlagParam {
+pub enum Flag {
     NumberNonBlank,
     ShowEnds,
     ShowHelp,
@@ -12,7 +11,7 @@ pub enum FlagParam {
 }
 
 #[derive(Debug, PartialEq)]
-pub enum InputParam {
+pub enum Input {
     File(String),
     Stdin
 }

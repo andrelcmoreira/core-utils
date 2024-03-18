@@ -1,14 +1,13 @@
 use std::env::args;
 
-use cat::cli_args::parse_cli_args;
-use cat::cat::Cat;
+use cat::{cli_args, it};
 
 fn main() {
     let args = args().collect::<Vec<String>>();
 
-    match parse_cli_args(args) {
+    match cli_args::parse(args) {
         Ok(opts) => {
-            let cat = Cat::new(opts);
+            let cat = it::Cat::new(opts);
 
             cat.run()
         },

@@ -1,4 +1,3 @@
-
 const TAB_CHAR: u8 = 0x9;
 const LF_CHAR: u8 = 0xa;
 const CR_CHAR: u8 = 0xd;
