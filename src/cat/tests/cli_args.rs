@@ -1,7 +1,6 @@
-use std::io::ErrorKind;
-
 use cat::cli_args;
 use cat::cli_param;
+use std::io::ErrorKind;
 
 #[test]
 fn parse_with_no_args() {
