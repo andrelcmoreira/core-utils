@@ -1,4 +1,4 @@
-use cat::it::Options;
+use cat::this::Options;
 use cat::cli_param::{Flag, Input};
 
 #[test]
