@@ -1,3 +1,4 @@
+mod test {
 use std::io::ErrorKind;
 
 use cat::cli_args;
@@ -327,4 +328,5 @@ fn parse_with_squeeze_blank_long_opt() {
     assert_eq!(ret.flags().contains(&cli_param::Flag::SqueezeBlank), true);
     assert_eq!(ret.inputs().len(), 1);
     assert_eq!(ret.flags().len(), 1)
+}
 }

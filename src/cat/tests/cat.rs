@@ -1,3 +1,4 @@
+mod test {
 use cat::this::Options;
 use cat::cli_param::{Flag, Input};
 
@@ -137,3 +138,4 @@ fn has_flag_with_multiple_flags() {
 //fn read_file_with_show_line_number_and_number_non_blank() {
 //    // TODO
 //}
+}

@@ -1,3 +1,4 @@
+mod test {
 use cat::traits::FileContent;
 
 #[test]
@@ -442,4 +443,5 @@ fn squeeze_empty_str() {
     text.squeeze_blank_lines();
 
     assert_eq!(text, expected)
+}
 }
