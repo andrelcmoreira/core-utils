@@ -8,7 +8,7 @@ pub fn is_regular_file(filename: &String) -> bool {
     data.is_file()
 }
 
-pub fn is_special_file(filename: &String) -> bool {
+pub fn is_special_file(_filename: &String) -> bool {
     // TODO
     false
 }
