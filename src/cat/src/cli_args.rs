@@ -1,8 +1,8 @@
 use std::io::{Error, ErrorKind};
-use crate::{this, cli_param};
+use crate::{cat, cli_param};
 
-pub fn parse(args: Vec<String>) -> Result<this::Options, Error> {
-    let mut opts = this::Options::new();
+pub fn parse(args: Vec<String>) -> Result<cat::Options, Error> {
+    let mut opts = cat::Options::new();
 
     for arg in &args[1..] {
         match arg.as_str() {

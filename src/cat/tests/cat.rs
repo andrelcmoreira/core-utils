@@ -1,5 +1,5 @@
 mod test {
-use cat::this::Options;
+use cat::cat::Options;
 use cat::cli_param::{Flag, Input};
 
 #[test]
