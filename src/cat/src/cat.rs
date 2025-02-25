@@ -1,8 +1,9 @@
+use std::io::{stdin, Error, Read};
+use std::fs::File;
+
 use crate::cli_param;
 use crate::traits::FileContent;
 use crate::{show_usage, show_version};
-use std::io::{stdin, Error, Read};
-use std::fs::File;
 use utils::filesystem::is_regular_file;
 
 #[derive(Debug)]
