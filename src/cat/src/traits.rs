@@ -2,6 +2,7 @@ const TAB_CHAR: u8 = 0x9;
 const LF_CHAR: u8 = 0xa;
 const CR_CHAR: u8 = 0xd;
 
+/// Trait to handle the content of the files handled by cat.
 pub trait FileContent {
     fn add_line_number(&mut self, skip_blank: bool);
     fn add_cr(&mut self);
@@ -12,6 +13,11 @@ pub trait FileContent {
 }
 
 impl FileContent for String {
+    /// Add line numbers to the current string.
+    ///
+    /// # Arguments
+    ///
+    /// * `skip_blank` - Flag indicating if the function must skip blank lines.
     fn add_line_number(&mut self, skip_blank: bool) {
         let mut tmp = String::new();
         let mut line_buffer = String::new();
@@ -56,6 +62,12 @@ impl FileContent for String {
         self.replace_byte(TAB_CHAR, "^I")
     }
 
+    /// Replace a specific byte within the string by another string.
+    ///
+    /// # Arguments
+    ///
+    /// * `from` - Byte to be replaced.
+    /// * `to` - The string to replace the `from` byte.
     fn replace_byte(&mut self, from: u8, to: &str) {
         let mut tmp = String::new();
 

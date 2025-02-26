@@ -6,9 +6,9 @@ fn main() {
 
     match cli_args::parse(args) {
         Ok(opts) => {
-            let cat = cat::Cat::new(opts);
+            let instance = cat::Cat::new(opts);
 
-            cat.run()
+            instance.run()
         },
         Err(e) => println!("{e}")
     }
