@@ -17,6 +17,10 @@ pub struct Cat {
 }
 
 impl Options {
+    /// Create a new instance of the [`Options`] structure.
+    ///
+    /// # Return
+    /// * A built [`Options`] instance.
     pub fn new() -> Self {
         Self {
             inputs: Vec::new(),
@@ -24,28 +28,60 @@ impl Options {
         }
     }
 
-    pub fn has_flag(&self, f: cli_param::Flag) -> bool {
-        self.flags.contains(&f)
+    /// Check if a specific flag was supplied.
+    ///
+    /// See [`cli_param::Flag`] for more details.
+    ///
+    /// # Arguments
+    /// * `flag`: The queried flag.
+    ///
+    /// # Return
+    /// * `true` if the queried flag was supplied;
+    /// * `false` if the queried flag wasn't supplied.
+    pub fn has_flag(&self, flag: cli_param::Flag) -> bool {
+        self.flags.contains(&flag)
     }
 
-    pub fn add_flag(&mut self, f: cli_param::Flag) {
-        self.flags.push(f)
+    /// Add a flag into the flags mapping.
+    ///
+    /// # Arguments
+    /// * `flag`: The flag to be added.
+    pub fn add_flag(&mut self, flag: cli_param::Flag) {
+        self.flags.push(flag)
     }
 
-    pub fn add_input(&mut self, i: cli_param::Input) {
-        self.inputs.push(i)
+    /// Add an input into the inputs mapping.
+    ///
+    /// See [`cli_param::Input`] for more details.
+    ///
+    /// # Arguments
+    /// * `input`: The input to be added.
+    pub fn add_input(&mut self, input: cli_param::Input) {
+        self.inputs.push(input)
     }
 
+    /// Get the inputs.
+    ///
+    /// # Return
+    /// * The list of inputs.
     pub fn inputs(&self) -> &Vec<cli_param::Input> {
         &self.inputs
     }
 
+    /// Get the flags.
+    ///
+    /// # Return
+    /// * The list of flags.
     pub fn flags(&self) -> &Vec<cli_param::Flag> {
         &self.flags
     }
 }
 
 impl Cat {
+    /// Create a new instance of the [`Cat`] structure.
+    ///
+    /// # Return
+    /// * A built [`Cat`] instance.
     pub fn new(opts: Options) -> Self {
         Self {
             opts
@@ -95,6 +131,14 @@ impl Cat {
         Ok(buffer)
     }
 
+    /// Read a given file.
+    ///
+    /// # Arguments
+    /// * `filename`: Name of the file to be read.
+    ///
+    /// # Return
+    /// * On success, the file content.
+    /// * On error, the suitable [`Error`] instance.
     fn read_file(&self, filename: &String) -> Result<String, Error> {
         let mut ret = String::new();
         let mut file = File::open(filename)?;
@@ -120,6 +164,7 @@ impl Cat {
         }
     }
 
+    /// Run the application.
     pub fn run(&self) {
         if self.opts.has_flag(cli_param::Flag::ShowHelp) {
             show_usage();
