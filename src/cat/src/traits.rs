@@ -2,7 +2,7 @@ const TAB_CHAR: u8 = 0x9;
 const LF_CHAR: u8 = 0xa;
 const CR_CHAR: u8 = 0xd;
 
-/// Trait to handle the content of the files handled by cat.
+/// Trait to handle the content of the input files.
 pub trait FileContent {
     fn add_line_number(&mut self, skip_blank: bool);
     fn add_cr(&mut self);
@@ -13,7 +13,7 @@ pub trait FileContent {
 }
 
 impl FileContent for String {
-    /// Add line numbers to the current string.
+    /// Add line numbers to the file content.
     ///
     /// # Arguments
     ///
@@ -26,7 +26,7 @@ impl FileContent for String {
         for byte in self.bytes() {
             line_buffer.push(byte as char);
 
-            if byte == LF_CHAR {
+            if byte == LF_CHAR { // we reach the end of the line
                 if line_buffer.len() == 1 && skip_blank {
                     tmp.push_str("\n")
                 } else {
@@ -50,19 +50,22 @@ impl FileContent for String {
         }
     }
 
+    /// Replace the carriage return characters within the file content by '^M'.
     fn add_cr(&mut self) {
         self.replace_byte(CR_CHAR, "^M")
     }
 
+    /// Replace the line feed characters within the file content by '$'.
     fn add_end_char(&mut self) {
         self.replace_byte(LF_CHAR, "$\n")
     }
 
+    /// Replace the tab characters within the file content by '^I'.
     fn add_tabs(&mut self) {
         self.replace_byte(TAB_CHAR, "^I")
     }
 
-    /// Replace a specific byte within the string by another string.
+    /// Replace a specific byte within the file content by a string.
     ///
     /// # Arguments
     ///
@@ -85,6 +88,7 @@ impl FileContent for String {
         }
     }
 
+    /// Squeeze the blank lines of the file content.
     fn squeeze_blank_lines(&mut self) {
         let mut tmp = String::new();
         let mut line = String::new();
