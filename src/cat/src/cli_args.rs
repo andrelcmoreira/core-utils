@@ -1,6 +1,14 @@
 use std::io::{Error, ErrorKind};
 use crate::{cat, cli_param};
 
+/// Parse the command line arguments supplied by the user.
+///
+/// # Arguments
+/// * `args` - The list of arguments supplied to the application.
+///
+/// # Return
+/// * On success, a [`cat::Options`] instance with the parsed arguments
+/// * On error, the suitable [`Error`] instance.
 pub fn parse(args: Vec<String>) -> Result<cat::Options, Error> {
     let mut opts = cat::Options::new();
 

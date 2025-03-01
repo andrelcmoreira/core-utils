@@ -3,6 +3,7 @@ pub mod cli_args;
 pub mod traits;
 pub mod cli_param;
 
+/// Show the application usage instructions.
 pub fn show_usage() {
     let usage =
         "Usage: cat [OPTION]... [FILE]...\n\
@@ -28,6 +29,7 @@ pub fn show_usage() {
     println!("{usage}")
 }
 
+/// Show the application version.
 pub fn show_version() {
     println!("cat {}", env!("CARGO_PKG_VERSION"))
 }
